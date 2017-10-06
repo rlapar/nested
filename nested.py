@@ -23,15 +23,18 @@ def main(input_fasta):
     fasta_sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))
     for fasta in fasta_sequences:
         genes[fasta.id] = {
-            'Sequence': fasta.seq
+            'Sequence': fasta.seq,
+            'ID': fasta.id
         }
-        print fasta.id
     
     print 'Running LTR finder...'
     transposons = runLTR(input_fasta) 
     for t in transposons:
         genes[t]['LTR_finder'] = transposons[t]
 
+    print 'Running GT annotation sketch...'
+    for g in genes:
+        sketch.visualize(genes[g])
     #Add features (other LTR_finding, BLAST similarity, protein domains)
     #Sketch
 
