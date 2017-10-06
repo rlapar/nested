@@ -7,12 +7,36 @@ import pprint
 import re
 import math
 
+from Bio import SeqIO
+from Bio.Blast import NCBIWWW
+from Bio.Blast import NCBIXML
+
 from python import config
+from python import progressBar
+from python import sketch
 
 @click.command()
 @click.option('--input_fasta', '-i', required=True, type=str, help='Input fasta file.')
-
+#main needs to be on the top
 def main(input_fasta):
+    genes = {}
+    fasta_sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))
+    for fasta in fasta_sequences:
+        genes[fasta.id] = {
+            'Sequence': fasta.seq
+        }
+        print fasta.id
+    
+    print 'Running LTR finder...'
+    transposons = runLTR(input_fasta) 
+    for t in transposons:
+        genes[t]['LTR_finder'] = transposons[t]
+
+    #Add features (other LTR_finding, BLAST similarity, protein domains)
+    #Sketch
+
+def runLTR(input_fasta):
+    #returning transposons
     process = subprocess.Popen([config.ltr_finder_path] + config.ltr_finder_args + [input_fasta], stdout=subprocess.PIPE, stderr=subprocess.PIPE)    
     stdout, stderr = process.communicate()
     sequences = stdout.split('>Sequence: ')
@@ -23,8 +47,7 @@ def main(input_fasta):
             continue
         transposons[seq_name] = parseLTRTable(s.split('\n')[1:])
         
-    pprint.pprint(transposons)    
-    
+    return transposons
 
 def parseLTRTable(rawTable):
     re_interval = re.compile('[0-9N]+[-][0-9N]+')
