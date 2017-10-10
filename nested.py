@@ -14,23 +14,29 @@ from Bio.Blast import NCBIXML
 from python import config
 from python import progressBar
 from python import sketch
+from python import domains
 
 @click.command()
 @click.option('--input_fasta', '-i', required=True, type=str, help='Input fasta file.')
 #main needs to be on the top
 def main(input_fasta):
+    #TO DO - CHECK FILE
     genes = {}
     fasta_sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))
     for fasta in fasta_sequences:
         genes[fasta.id] = {
-            'Sequence': fasta.seq,
-            'ID': fasta.id
+            'sequence': fasta.seq,
+            'id': fasta.id
         }
     
     print 'Running LTR finder...'
-    transposons = runLTR(input_fasta) 
+    transposons = runLTR(input_fasta, len(fasta_sequences)) 
     for t in transposons:
-        genes[t]['LTR_finder'] = transposons[t]
+        genes[t]['ltr_finder'] = transposons[t]
+
+    print 'Running blastx...'
+    for g in genes:
+        genes[g]['domains'] = domains.findDomains(genes[g])
 
     print 'Running GT annotation sketch...'
     for g in genes:
@@ -38,7 +44,7 @@ def main(input_fasta):
     #Add features (other LTR_finding, BLAST similarity, protein domains)
     #Sketch
 
-def runLTR(input_fasta):
+def runLTR(input_fasta, batch_size=0):
     #returning transposons
     process = subprocess.Popen([config.ltr_finder_path] + config.ltr_finder_args + [input_fasta], stdout=subprocess.PIPE, stderr=subprocess.PIPE)    
     stdout, stderr = process.communicate()

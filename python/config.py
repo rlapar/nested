@@ -9,7 +9,15 @@ ltr_finder_args += ['-p', '15']
 ltr_finder_args += ['-g', '80']
 ltr_finder_args += ['-G', '5']
 ltr_finder_args += ['-T', '2']
-ltr_finder_args += ['-w', '2']
+ltr_finder_args += ['-w', '2'] #don't change, parsing format needed!
 ltr_finder_args += ['-a', ltr_finder_prosite_path]
 ltr_finder_args += ['-s', ltr_finder_tRNAdb_path]
- 
+
+blastx_gydb_protein_db = "/home/radovan/lexa/blastDB/data/gydb_proteins.fa"
+blastx_args = {
+    'num_threads': 3,
+    'dbsize': 90000,
+    'word_size': 2,
+    'evalue': 1
+}
+#ADD BLAST PARAMETERS
