@@ -4,10 +4,10 @@ import pprint
 
 from python import config
 from python import ltr as pythonLtr
-from python import progressBar
+#from python import progressBar
 from python import sketch as pythonSketch
 from python import domains as pythonBlast
-from python import geneGraph
+#from python import geneGraph
 #from python import intervalTree as it
 
 def expandIntervals(intervals):
@@ -23,11 +23,15 @@ def expandIntervals(intervals):
 
 def findNestedTranspononsTree(fasta_sequences):
     nested = findNestedTransposons(fasta_sequences)
+    genes = pythonLtr.getGeneDict(fasta_sequences)
+    for g in genes:
+        genes[g]['nested'] = nested[g]
     #reconstruct
     #ITERATE FROM THE BACK AND RECONSTRUCT TREE
-    for n in nested:
-        nested[n] = expandIntervals(nested[n])
-        print n, ':', nested[n]
+    for g in genes:
+        genes[g]['nested'] = expandIntervals(genes[g]['nested'])
+        print g, ':', genes[g]['nested']
+    pythonSketch.sketch(genes)
         #tree = it.IntervalTree(nested[n])
         #tree.printIntervalList()
 
@@ -38,6 +42,7 @@ def findNestedTranspononsTree(fasta_sequences):
     
 
 def findNestedTransposons(fasta_sequences):
+    #print '______________________'
     genes = pythonLtr.getGeneDict(fasta_sequences)
 
     #Find LTR pairs using LTR_finder
@@ -96,7 +101,7 @@ def findBestCandidate(genes):
 
 def evaluateTransposon(transposon, domains):
     score = 0
-    #print 'Evaluation transposon: ' + transposon['seqid'] + ' ' + transposon['index']
+    #print 'Evaluation transposon: ' + transposon['seqid'] + ' ' + str(transposon['location'])
     
     #Look for domains
     for domain_type in domains:
@@ -116,4 +121,8 @@ def evaluateTransposon(transposon, domains):
     if not math.isnan(transposon['ppt'][0]):
         score += 1000
 
+    score /= float(transposon['location'][1] - transposon['location'][0])
+    
+
+    #print score
     return score
