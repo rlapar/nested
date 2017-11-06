@@ -10,19 +10,22 @@ def runBlastx(genes):
     #print 'Running blastx...'
     for g in genes:
         genes[g]['domains'] = findDomains(genes[g])
+        
     return genes
 
 def findDomains(gene):
+    domains = {'INT':[],'GAG':[],'AP':[],'RNaseH':[],'RT':[],'XX':[]}
     blastx_cline = NcbiblastxCommandline(db=config.blastx_gydb_protein_db, outfmt=5, 
         num_threads=config.blastx_args['num_threads'], dbsize=config.blastx_args['dbsize'], 
         word_size=config.blastx_args['word_size'], evalue=config.blastx_args['evalue'])
     
     xml_out, stderr = blastx_cline(stdin=str(gene['sequence']))
-    
     blast_records = NCBIXML.parse(StringIO(xml_out))
-    blast_record = next(blast_records).alignments
+    try:
+        blast_record = next(blast_records).alignments
+    except ValueError:
+        return domains
     #print len(blast_record)
-    domains = {'INT':[],'GAG':[],'AP':[],'RNaseH':[],'RT':[],'XX':[]}
     if blast_record:
         for alignment in blast_record:
             for hsp in alignment.hsps:

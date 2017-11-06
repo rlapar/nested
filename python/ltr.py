@@ -45,8 +45,11 @@ def runLtrFinder(genes):
         transposons[seq_name] = parseLTRTable(s.split('\n')[1:])
         
     #append to genes
-    for ltr in transposons:
-        genes[ltr]['ltr_finder'] =transposons[ltr]  
+    for ltr in genes:
+        if ltr in transposons:
+            genes[ltr]['ltr_finder'] = transposons[ltr]  
+        else:
+            genes[ltr]['ltr_finder'] = [] 
 
     return genes
 

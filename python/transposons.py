@@ -4,11 +4,11 @@ import pprint
 
 from python import config
 from python import ltr as pythonLtr
-from python import progressBar
+#from python import progressBar
 from python import sketch as pythonSketch
 from python import domains as pythonBlast
-from python import geneGraph
-#from python import intervalTree as it
+#from python import geneGraph
+from python import intervalTree as it
 
 def expandIntervals(intervals):
     for i in range(len(intervals) - 2, -1, -1):
@@ -23,21 +23,21 @@ def expandIntervals(intervals):
 
 def findNestedTranspononsTree(fasta_sequences):
     nested = findNestedTransposons(fasta_sequences)
+    genes = pythonLtr.getGeneDict(fasta_sequences)
+    for g in genes:
+        genes[g]['nested'] = nested[g]
     #reconstruct
     #ITERATE FROM THE BACK AND RECONSTRUCT TREE
-    for n in nested:
-        nested[n] = expandIntervals(nested[n])
-        print n, ':', nested[n]
-        #tree = it.IntervalTree(nested[n])
-        #tree.printIntervalList()
-
-    #intervals = [[200,400], [1200,1400], [800,1000], [700,900], [300,500], [100,400], [0,400]]
-    #print expandIntervals(intervals)
-    #intervals = [[200,300], [600,700], [100,700]]
-    
+    for g in genes:
+        genes[g]['nested']['intervals'] = expandIntervals(genes[g]['nested']['intervals'])
+        print g, ':', genes[g]['nested']['intervals']
+        genes[g]['nested']['tree'] = it.IntervalTree(genes[g]['nested']['intervals'], genes[g]['nested']['transposons']).toDict()
+                
+    pythonSketch.sketch(genes)  
     
 
 def findNestedTransposons(fasta_sequences):
+    #print '______________________'
     genes = pythonLtr.getGeneDict(fasta_sequences)
 
     #Find LTR pairs using LTR_finder
@@ -55,26 +55,33 @@ def findNestedTransposons(fasta_sequences):
     #SAVE COORDINATES FOR BACKTRACK
     nested = {}
     for g in genes:
-        if math.isnan(genes[g]['best_transposon'][0]):
-            nested[g] = []
+        if math.isnan(genes[g]['best_transposon']['location'][0]):
+            nested[g] = {
+                'intervals': [],
+                'transposons': []
+            }
         else:
-            nested[g] = [genes[g]['best_transposon']]
+            nested[g] = {
+                'intervals': [genes[g]['best_transposon']['location']],
+                'transposons': [genes[g]['best_transposon']]
+            }
 
     #CROP SEQUENCES AND RECURSIVELY CALL
     cropped = False
     cropped_sequences = []
     for sequence in fasta_sequences:
-        if not math.isnan(genes[sequence.id]['best_transposon'][0]):
+        if not math.isnan(genes[sequence.id]['best_transposon']['location'][0]):
             #print 'Cropped: ' +  str(genes[sequence.id]['best_transposon'])
             cropped = True
-            location = genes[sequence.id]['best_transposon']
+            location = genes[sequence.id]['best_transposon']['location']
             cropped_sequences.append(sequence[:(location[0] - 1)] + sequence[(location[1] + 1):])
 
     #RECURSIVELY CALL
     if cropped:
         nested_cropped = findNestedTransposons(cropped_sequences)
         for a in nested_cropped:
-            nested[a] += nested_cropped[a]
+            nested[a]['intervals'] += nested_cropped[a]['intervals']
+            nested[a]['transposons'] += nested_cropped[a]['transposons']
 
     return nested
     
@@ -87,16 +94,23 @@ def findBestCandidate(genes):
     #get best evaluated transposon
     for gene in genes:
         if not len(genes[gene]['ltr_finder']):
-            genes[gene]['best_transposon'] = [float('nan'), float('nan')]
+            genes[gene]['best_transposon'] = {
+                'location': [float('nan'), float('nan')]
+            }
         else:
-            best_transposon = max(genes[gene]['ltr_finder'], key=lambda d: d['evaluated'])
-            genes[gene]['best_transposon'] = best_transposon['location']
+            best_transposon = max(genes[gene]['ltr_finder'], key=lambda d: d['evaluated']['score'])
+            genes[gene]['best_transposon'] = best_transposon
             
     return genes
 
 def evaluateTransposon(transposon, domains):
     score = 0
-    #print 'Evaluation transposon: ' + transposon['seqid'] + ' ' + transposon['index']
+    features = {
+        'domains': [],
+        'pbs': None,
+        'ppt': None
+    }
+    #print 'Evaluation transposon: ' + transposon['seqid'] + ' ' + str(transposon['location'])
     
     #Look for domains
     for domain_type in domains:
@@ -107,13 +121,21 @@ def evaluateTransposon(transposon, domains):
             #found domain
             if domain_location[0] >= transposon['location'][0] and domain_location[1] <= transposon['location'][1]:
                 score += domain['score']
+                features['domains'].append(domain)
     
     #Check PBS
     if not math.isnan(transposon['pbs'][0]):
         score += 1000
+        features['pbs'] = transposon['pbs']
 
     #Check PPT
     if not math.isnan(transposon['ppt'][0]):
         score += 1000
+        features['ppt'] = transposon['ppt']
 
-    return score
+    score /= float(transposon['location'][1] - transposon['location'][0])
+    
+    return {
+        'score': score,
+        'features': features
+    }

@@ -1,4 +1,5 @@
 import math
+import pprint
 
 from BCBio import GFF
 from Bio.Seq import Seq
@@ -11,6 +12,62 @@ from gt.annotationsketch import *
 from gt.annotationsketch.custom_track import CustomTrack
 from gt.core.gtrange import Range
 
+def containsSubinterval(a, b):
+    #a contains b as subinterval
+    return b[0] >= a[0] and b[1] <= a[1] 
+
+def removeSubinterval(a,b):
+    #remove subinterval b from a
+    return [[a[0], b[0]], [b[1], a[1]]]
+
+def intervalsToGFF(gene, tree):
+    #crop intervals
+    croppedTree = []
+    for i in range(len(tree)):
+        #find direct children
+        directChildren = []
+        for j in reversed(range(0,i)):
+            directChild = True
+            for dc in directChildren:
+                if containsSubinterval(dc, tree[j]):
+                    directChild = False
+            if not directChild:
+                continue
+            if containsSubinterval(tree[i], tree[j]):
+                directChildren.append(tree[j])
+        directChildren.sort()
+        node = [tree[i]]
+        for child in directChildren:
+            node = node[:-1] + removeSubinterval(node[-1], child)
+        croppedTree.append(node)
+    
+    #GFF
+    rec = SeqRecord(gene['sequence'], gene['id'])
+    features = []
+    i = 0
+    for interval in croppedTree:
+        #insert base
+        feat = SeqFeature(FeatureLocation(interval[0][0], interval[-1][1]), type='gene', strand=0, qualifiers={'ID': 'Transposon {}'.format(i)})
+        feat.sub_features = []
+        #insert all intervals
+        for subinterval in interval:
+            feat.sub_features.append(SeqFeature(FeatureLocation(subinterval[0],subinterval[1]), type='te_base', strand=0))
+
+        features.append(feat)
+        i += 1
+
+    rec.features = features
+    #possible other formats as well
+    with open('data/' + gene['id'] + '.gff', 'w+') as out_handle:
+        gff = GFF.write([rec], out_handle)
+
+def sketch(genes):
+    print 'Running GT annotation sketch...'
+    for g in genes:
+        intervalsToGFF(genes[g], genes[g]['nested']['intervals'])
+        #treeToGFF(genes[g]['nested']['tree'])
+        visualize(genes[g])
+
 def geneToGFF(gene):
     #insert gene
     rec = SeqRecord(gene['sequence'], gene['id'])
@@ -20,24 +77,25 @@ def geneToGFF(gene):
 
     #insert LTR finder results
     for transposon in gene['ltr_finder']:
-        LTR_feature = SeqFeature(FeatureLocation(transposon['Location'][0], transposon['Location'][1]), 
+        LTR_feature = SeqFeature(FeatureLocation(transposon['location'][0], transposon['location'][1]), 
             type='LTR_finder_TE', strand=1)
         LTR_feature.sub_features = []
-        if not math.isnan(transposon['PPT'][0]):
+        if not math.isnan(transposon['ppt'][0]):
             strand = 1
-            if transposon['PPT'][0] > transposon['PPT'][1]:
+            if transposon['ppt'][0] > transposon['ppt'][1]:
                 strand = -1
-            LTR_feature.sub_features.append(SeqFeature(FeatureLocation(transposon['PPT'][0], transposon['PPT'][1]), 
-                type='LTR_PPT', strand=1))
-        if not math.isnan(transposon['PBS'][0]):
+            LTR_feature.sub_features.append(SeqFeature(FeatureLocation(transposon['ppt'][0], transposon['ppt'][1]), 
+                type='LTR_ppt', strand=1))
+        if not math.isnan(transposon['pbs'][0]):
             strand = 1
-            if transposon['PBS'][0] > transposon['PBS'][1]:
+            if transposon['pbs'][0] > transposon['pbs'][1]:
                 strand = -1
-            LTR_feature.sub_features.append(SeqFeature(FeatureLocation(transposon['PBS'][0], transposon['PBS'][1]), 
-                type='LTR_PBS', strand=1))
+            LTR_feature.sub_features.append(SeqFeature(FeatureLocation(transposon['pbs'][0], transposon['pbs'][1]), 
+                type='LTR_pbs', strand=1))
         features.append(LTR_feature)        
 
     #domain type: INT, GAG, AP, RT, RNaseH, Unkwnown
+    '''
     domain_features = {}
     domain_features['INT'] = SeqFeature(FeatureLocation(0, len(gene['sequence'])), type='INT', strand=0)
     domain_features['GAG'] = SeqFeature(FeatureLocation(0, len(gene['sequence'])), type='GAG', strand=0)
@@ -50,8 +108,8 @@ def geneToGFF(gene):
     #insert domains
     for domain in gene['domains']:
         strand = 1
-        x,y = domain['Location'][0], domain['Location'][1]
-        if domain['Location'][0] > domain['Location'][1]:
+        x,y = domain['location'][0], domain['location'][1]
+        if domain['location'][0] > domain['location'][1]:
             strand = -1
             x,y = y,x
         domain_type = domain['Type'].split('_')[0]
@@ -61,14 +119,14 @@ def geneToGFF(gene):
 
     for df in domain_features:
         features.append(domain_features[df])
-
+    '''
     rec.features = features
     #possible other formats as well
     with open('data/' + gene['id'] + '.gff', 'w+') as out_handle:
         gff = GFF.write([rec], out_handle)
 
 def visualize(gene):
-    geneToGFF(gene)
+    #geneToGFF(gene)
 
     #Style
     style = Style()
