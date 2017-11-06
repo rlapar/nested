@@ -20,7 +20,7 @@ def removeSubinterval(a,b):
     #remove subinterval b from a
     return [[a[0], b[0]], [b[1], a[1]]]
 
-def treeToGFF(gene, tree):
+def intervalsToGFF(gene, tree):
     #crop intervals
     croppedTree = []
     for i in range(len(tree)):
@@ -64,7 +64,7 @@ def treeToGFF(gene, tree):
 def sketch(genes):
     print 'Running GT annotation sketch...'
     for g in genes:
-        treeToGFF(genes[g], genes[g]['nested'])
+        intervalsToGFF(genes[g], genes[g]['nested']['intervals'])
         visualize(genes[g])
 
 def geneToGFF(gene):
