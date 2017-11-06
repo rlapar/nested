@@ -8,7 +8,7 @@ from python import ltr as pythonLtr
 from python import sketch as pythonSketch
 from python import domains as pythonBlast
 #from python import geneGraph
-#from python import intervalTree as it
+from python import intervalTree as it
 
 def expandIntervals(intervals):
     for i in range(len(intervals) - 2, -1, -1):
@@ -31,14 +31,9 @@ def findNestedTranspononsTree(fasta_sequences):
     for g in genes:
         genes[g]['nested']['intervals'] = expandIntervals(genes[g]['nested']['intervals'])
         print g, ':', genes[g]['nested']['intervals']
-    pythonSketch.sketch(genes)
-        #tree = it.IntervalTree(nested[n])
-        #tree.printIntervalList()
-
-    #intervals = [[200,400], [1200,1400], [800,1000], [700,900], [300,500], [100,400], [0,400]]
-    #print expandIntervals(intervals)
-    #intervals = [[200,300], [600,700], [100,700]]
-    
+        genes[g]['nested']['tree'] = it.IntervalTree(genes[g]['nested']['intervals'], genes[g]['nested']['transposons']).toDict()
+                
+    pythonSketch.sketch(genes)  
     
 
 def findNestedTransposons(fasta_sequences):

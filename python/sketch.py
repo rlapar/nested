@@ -65,6 +65,7 @@ def sketch(genes):
     print 'Running GT annotation sketch...'
     for g in genes:
         intervalsToGFF(genes[g], genes[g]['nested']['intervals'])
+        #treeToGFF(genes[g]['nested']['tree'])
         visualize(genes[g])
 
 def geneToGFF(gene):
