@@ -6,23 +6,20 @@ import math
 #import pprint
 
 from Bio import SeqIO
-
 from python import config
 
 def getFastaFromFile(input_file):
     return list(SeqIO.parse(open(input_file), 'fasta'))
 
 def getGeneDict(fasta_sequences):
-    genes = {}
-    
+    genes = {}    
     for fasta in fasta_sequences:
         genes[fasta.id] = {
             'sequence': fasta.seq,
             'id': fasta.id
-        }
-    
+        }    
     return genes
-    
+
 def runLtrFinder(genes):
     #print 'Running LTR finder...'
     #createTmpFastaFile

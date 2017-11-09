@@ -20,11 +20,11 @@
 
 style =
 {
-  te_base = {
+  te = {
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
-    fill               = {red=0.8, green=0.8, blue=0.2, alpha = 1.0},
+    fill               = {red=1.0, green=1.0, blue=1.0, alpha = 1.0},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = true,
@@ -36,14 +36,46 @@ style =
     max_show_width     = nil,
   },
 --------------------------------------
-  gene = {
+  te_base = {
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 0.2},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 0.2},
-    fill               = {red=0.0, green=0.0, blue=0.0, alpha = 0.2},
+    fill               = {red=0.0, green=0.0, blue=0.0, alpha = 0.1},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = false,
+    split_lines        = true,
+    -- Caption options
+    max_capt_show_width= nil,
+    -- Display this track only if the viewport is not wider than this
+    -- number of nucleotides. Set to 0 to disable type track.
+    max_show_width     = nil,
+  },
+--------------------------------------
+  domain = {
+    -- Color definitions
+    stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
+    stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
+    fill               = {red=0.0, green=1.0, blue=1.0, alpha = 5.0},
+    style              = "box",
+    -- Collapsing options
+    collapse_to_parent = true,
+    split_lines        = true,
+    -- Caption options
+    max_capt_show_width= nil,
+    -- Display this track only if the viewport is not wider than this
+    -- number of nucleotides. Set to 0 to disable type track.
+    max_show_width     = nil,
+  },
+--------------------------------------
+  domain_base = {
+    -- Color definitions
+    stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 0.0},
+    stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 0.0},
+    fill               = {red=0.0, green=0.0, blue=0.0, alpha = 0.1},
+    style              = "box",
+    -- Collapsing options
+    collapse_to_parent = true,
     split_lines        = true,
     -- Caption options
     max_capt_show_width= nil,
