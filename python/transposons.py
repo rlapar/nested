@@ -4,6 +4,7 @@ import copy
 
 from python import ltr as pythonLtr
 from python import domains as pythonBlast
+from python import geneGraph
 
 class Nester:
     #self.genes
@@ -24,72 +25,22 @@ class Nester:
             self.nested[g] = self.__expandTransposons(self.nested[g])
     
     def __expandInterval(self, source, target):
-        if math.isnan(target[0]):
-            return target        
-        if source[0] > target[1]:
-            return target
-        src_len = source[1] - source[0]
-        if target[0] > source[0]:
-            target[0] += src_len
-        if target[1] > source[0]:
-            target[0] += src_len
+        length = (source[1] - source[0])
+        if source[0] <= target[0]:
+            target[0] += length
+        if source[0] <= target[1]:
+            target[1] += length
+
         return target
 
     def __expandTransposons(self, nested): 
         for i in reversed(range(len(nested) - 1)):
-            pass
-
-        for i in reversed(range(len(nested) - 1)):
-            te_len = (nested[i]['location'][1] - nested[i]['location'][0])
             for j in range(i + 1, len(nested)):
-                if nested[i]['location'][0] <= nested[j]['location'][0]:
-                    nested[j]['location'][0] += te_len
-                if nested[i]['location'][0] <= nested[j]['location'][1]:
-                    nested[j]['location'][1] += te_len
-
-                for domain in nested[j]['features']['domains']:
-                    if nested[i]['location'][0] <= domain['location'][0]:
-                        domain['location'][0] += te_len
-                    if nested[i]['location'][0] <= domain['location'][1]:
-                        domain['location'][1] += te_len
-
-                if nested[i]['location'][0] <= nested[j]['features']['ppt'][0]:
-                    nested[j]['features']['ppt'][0] += te_len
-                if nested[i]['location'][0] <= nested[j]['features']['ppt'][1]:
-                    nested[j]['features']['ppt'][1] += te_len
-
-                if nested[i]['location'][0] <= nested[j]['features']['pbs'][0]:
-                    nested[j]['features']['pbs'][0] += te_len
-                if nested[i]['location'][0] <= nested[j]['features']['pbs'][1]:
-                    nested[j]['features']['pbs'][1] += te_len
-
-        """for i in range(len(nested)):
-            print nested[i]['location']
-            for domain in nested[i]['features']['domains']:
-                print '\t', domain['location']"""
-        """
-        for te in nested:
-            te['crop_point'] = []
-
-        for i in range(len(nested) - 2, -1, -1):
-            for j in range(i+1, len(nested)):
-                te_len = (nested[i]['location'][1] - nested[i]['location'][0])
-                if nested[i]['location'][0] <= nested[j]['location'][1]:
-                    nested[j]['location'][1] += te_len
-                #expand crop points
-                for p in nested[j]['crop_point']:
-                    p = self.__expandInterval(nested[i]['location'], p)
-                #expand domains
-                for domain in nested[j]['features']['domains']:
-                    domain = self.__expandInterval(nested[i]['location'], domain['location'])
-                #expand ppt,pbs
+                nested[j]['location'] = self.__expandInterval(nested[i]['location'], nested[j]['location'])
+                for domain in nested[j]['features']['domains']:                    
+                    domain['location'] = self.__expandInterval(nested[i]['location'], domain['location'])                
                 nested[j]['features']['ppt'] = self.__expandInterval(nested[i]['location'], nested[j]['features']['ppt'])
                 nested[j]['features']['pbs'] = self.__expandInterval(nested[i]['location'], nested[j]['features']['pbs'])
-
-                if nested[i]['location'][0] <= nested[j]['location'][0]:
-                    nested[j]['location'][0] += te_len
-                else: #nesting case
-                    nested[j]['crop_point'].append(copy.deepcopy(nested[i]['location']))"""
                 
         return nested
 
@@ -152,6 +103,8 @@ class Nester:
 
 
     def __evaluatePair(self, ltr_pair, gene):
+        #g = geneGraph.GeneGraph(ltr_pair, gene['domains'])
+
         score = 0
         features = {
             'domains': [],
