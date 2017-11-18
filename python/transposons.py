@@ -1,6 +1,7 @@
 import math
 import pprint
 import copy
+import operator
 
 from python import ltr as pythonLtr
 from python import domains as pythonBlast
@@ -101,38 +102,31 @@ class Nester:
 
         return genes
 
+    def _addDomainToList(self, domain, domainList):
+        #TODO check domains properly
+        for domain2 in domainList:
+            if domain['location'][0] >= domain2['location'][0] and domain['location'][0] <= domain2['location'][1]:
+                return domainList
+            if domain['location'][1] >= domain2['location'][0] and domain['location'][1] <= domain2['location'][1]:
+                return domainList
+        domainList.append(domain)
+        return domainList
+
+    def _mergeDomains(self, domains):
+        new_domains = {}
+        for domain_type in domains:
+            new_domains[domain_type] = []
+            domains[domain_type].sort(key=operator.itemgetter('score'), reverse=True)
+            for domain in domains[domain_type]:
+                new_domains[domain_type] = self._addDomainToList(domain, new_domains[domain_type])            
+        return new_domains
+
 
     def __evaluatePair(self, ltr_pair, gene):
-        #g = geneGraph.GeneGraph(ltr_pair, gene['domains'])
+        #gene['domains'] = self._mergeDomains(gene['domains'])
+        g = geneGraph.GeneGraph(ltr_pair, gene['domains'])
+        score, features = g.getScore()
 
-        score = 0
-        features = {
-            'domains': [],
-            'pbs': [float('nan'), float('nan')],
-            'ppt': [float('nan'), float('nan')]
-        }
-
-        #Look for domains
-        domains = gene['domains']
-        for domain_type in domains:
-            for domain in domains[domain_type]:
-                domain_location = domain['location']
-                if domain_location[0] > domain_location[1]:
-                    domain_location = [domain_location[1], domain_location[0]]
-                #found domain
-                if domain_location[0] >= ltr_pair['location'][0] and domain_location[1] <= ltr_pair['location'][1]:
-                    score += domain['score']
-                    features['domains'].append(copy.deepcopy(domain))
-
-        #Check PBS
-        if not math.isnan(ltr_pair['pbs'][0]):
-            score += 1000
-            features['pbs'] = ltr_pair['pbs']
-
-        #Check PPT
-        if not math.isnan(ltr_pair['ppt'][0]):
-            score += 1000
-            features['ppt'] = ltr_pair['ppt']
 
         score /= float(ltr_pair['location'][1] - ltr_pair['location'][0])
         
@@ -141,3 +135,5 @@ class Nester:
             'score': score,
             'features': features
         }
+
+    

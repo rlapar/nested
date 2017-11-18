@@ -85,20 +85,15 @@ def createGFF(gene, nested):
             if sign < 0:
                 domain['location'] = [domain['location'][1], domain['location'][0]]
             
-            #features.append(SeqFeature(FeatureLocation(domain['location'][0], domain['location'][1]), 
-            #                                type='domain_base', 
-            #                                strand=sign,
-            #                                qualifiers={'ID': 'DOMAIN {}-{}'.format(i,j), 'Parent': 'TE_BASE {}'.format(i)}))
-            
             overlap = [x for x in children if contains(domain['location'], x)]
 
             cropped_domain = crop(domain['location'], overlap)
             for part in cropped_domain:
                 features.append(SeqFeature(FeatureLocation(part[0], part[1]),
-                                                    type='domain',
+                                                    type=domain['type'],
                                                     strand=sign,
                                                     #qualifiers={'Parent': 'DOMAIN {}-{}'.format(i,j)}))
-                                                    qualifiers={'Parent': 'TE_BASE {}'.format(i)}))
+                                                    qualifiers={'ID': 'DOMAIN {}-{}'.format(i,j),'Parent': 'TE_BASE {}'.format(i)}))
 
             j += 1
         

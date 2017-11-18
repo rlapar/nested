@@ -24,12 +24,13 @@ def main(input_fasta):
     nester = pythonTransposons.Nester(fasta_sequences)
     nested_transposons = nester.getNested()
     genes = nester.getGenes()
+    '''
     for g in nested_transposons:
         print g, 
         for n in nested_transposons[g]:
             print n['location'],
         print ''
-        
+    ''' 
     pythonSketch.sketch(nested_transposons, genes)
 
     #clear tmp

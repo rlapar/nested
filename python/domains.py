@@ -41,6 +41,7 @@ def findDomains(gene):
                     domain['location'] =[hsp.query_start, hsp.query_start + 3 * hsp.align_length]               
                 
                 domain_type = alignment.title.split(' ')[1].split('_')[0]
+                domain['type'] = domain_type
                 if domain_type not in domains.keys():
                     domains['XX'].append(domain)
                 else:
