@@ -56,7 +56,7 @@ style =
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
-    fill               = {red=0.5, green=0.2, blue=0.1, alpha = 5.0},
+    fill               = {red=0.6784, green=0.0784, blue=0.3412, alpha = 5.0},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = true,
@@ -72,7 +72,7 @@ style =
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
-    fill               = {red=0.5, green=1.0, blue=1.0, alpha = 5.0},
+    fill               = {red=0.7333, green=0.8706, blue=0.9843, alpha = 5.0},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = true,
@@ -88,7 +88,7 @@ style =
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
-    fill               = {red=0.0, green=1.0, blue=0.5, alpha = 5.0},
+    fill               = {red=0.2588, green=0.6471, blue=0.9608, alpha = 5.0},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = true,
@@ -104,7 +104,7 @@ style =
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
-    fill               = {red=1.0, green=0.0, blue=1.0, alpha = 5.0},
+    fill               = {red=0.0980, green=0.4627, blue=0.8235, alpha = 5.0},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = true,
@@ -120,7 +120,7 @@ style =
     -- Color definitions
     stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 1.0},
     stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 1.0},
-    fill               = {red=1.0, green=1.0, blue=0.0, alpha = 5.0},
+    fill               = {red=0.0510, green=0.2784, blue=0.6314, alpha = 5.0},
     style              = "box",
     -- Collapsing options
     collapse_to_parent = true,
