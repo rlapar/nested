@@ -21,6 +21,7 @@ gt_sketch_args += ['-style', '/home/radovan/git/nested/gt.style']
 
 blastx_args = {
     'db': '/home/radovan/lexa/blastDB/data/gydb_proteins.fa',
+    'outfmt': 5,
     'num_threads': 3,
     'dbsize': 90000,
     'word_size': 2,
