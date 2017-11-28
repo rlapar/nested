@@ -19,7 +19,6 @@ gt_sketch_args = ['sketch']
 gt_sketch_args += ['-width', '1400']
 gt_sketch_args += ['-style', '/home/radovan/git/nested/gt.style']
 
-blastx_gydb_protein_db = '/home/radovan/lexa/blastDB/data/gydb_proteins.fa'
 blastx_args = {
     'db': '/home/radovan/lexa/blastDB/data/gydb_proteins.fa',
     'num_threads': 3,
