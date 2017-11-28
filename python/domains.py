@@ -15,9 +15,7 @@ def runBlastx(genes):
 
 def findDomains(gene):
     domains = {'INT':[],'GAG':[],'AP':[],'RNaseH':[],'RT':[],'XX':[]}
-    blastx_cline = NcbiblastxCommandline(db=config.blastx_gydb_protein_db, outfmt=5, 
-        num_threads=config.blastx_args['num_threads'], dbsize=config.blastx_args['dbsize'], 
-        word_size=config.blastx_args['word_size'], evalue=config.blastx_args['evalue'])
+    blastx_cline = NcbiblastxCommandline(**config.blastx_args)
     
     xml_out, stderr = blastx_cline(stdin=str(gene['sequence']))
     blast_records = NCBIXML.parse(StringIO(xml_out))

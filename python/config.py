@@ -13,7 +13,7 @@ ltr_finder_args += ['-w', '2'] #don't change, parsing format needed!
 ltr_finder_args += ['-a', ltr_finder_prosite_path]
 ltr_finder_args += ['-s', ltr_finder_tRNAdb_path]
 
-call_gt_sketch_externally = True
+call_gt_sketch_externally = False
 gt_sketch_path = 'gt'
 gt_sketch_args = ['sketch']
 gt_sketch_args += ['-width', '1400']
@@ -21,6 +21,7 @@ gt_sketch_args += ['-style', '/home/radovan/git/nested/gt.style']
 
 blastx_gydb_protein_db = '/home/radovan/lexa/blastDB/data/gydb_proteins.fa'
 blastx_args = {
+    'db': '/home/radovan/lexa/blastDB/data/gydb_proteins.fa',
     'num_threads': 3,
     'dbsize': 90000,
     'word_size': 2,
