@@ -1,3 +1,4 @@
+import os
 import math
 import pprint
 import copy
@@ -19,12 +20,20 @@ class Nester:
     def getGenes(self):
         return self.genes
 
+    def _makeDataDirs(self, genes):
+        for g in genes:
+            if not os.path.exists('data/{}'.format(g)):
+                os.makedirs('data/{}'.format(g))
+            if not os.path.exists('data/{}/TE'.format(g)):
+                os.makedirs('data/{}/TE'.format(g))
+
     def __findNestedTransposons(self, fasta_sequences):
         self.genes, self.nested = self.__getUnexpandedTransposons(fasta_sequences)
         
         for g in self.nested:
             self.nested[g] = self.__expandTransposons(self.nested[g])
-    
+            
+           
     def __expandInterval(self, source, target):
         length = (source[1] - source[0])
         if source[0] <= target[0]:
@@ -47,6 +56,8 @@ class Nester:
 
     def __getUnexpandedTransposons(self, fasta_sequences):
         genes = self.__collectGeneInformation(fasta_sequences)
+
+        self._makeDataDirs(genes)
 
         #Save location for reconstruction
         nested = {}
