@@ -1,6 +1,6 @@
-ltr_finder_path = "/home/radovan/lexa/LTR_finder/ltr_finder"
-ltr_finder_prosite_path = "/home/radovan/lexa/prosite"
-ltr_finder_tRNAdb_path = "/home/radovan/lexa/LTR_finder/tRNAdb/Athal-tRNAs.fa"
+ltr_finder_path = '/home/radovan/lexa/LTR_finder/ltr_finder'
+ltr_finder_prosite_path = '/home/radovan/lexa/prosite'
+ltr_finder_tRNAdb_path = '/home/radovan/lexa/LTR_finder/tRNAdb/Athal-tRNAs.fa'
 
 ltr_finder_args = ['-l', '32']
 ltr_finder_args += ['-S', '3']
@@ -13,8 +13,15 @@ ltr_finder_args += ['-w', '2'] #don't change, parsing format needed!
 ltr_finder_args += ['-a', ltr_finder_prosite_path]
 ltr_finder_args += ['-s', ltr_finder_tRNAdb_path]
 
-blastx_gydb_protein_db = "/home/radovan/lexa/blastDB/data/gydb_proteins.fa"
+call_gt_sketch_externally = False
+gt_sketch_path = 'gt'
+gt_sketch_args = ['sketch']
+gt_sketch_args += ['-width', '1400']
+gt_sketch_args += ['-style', '/home/radovan/git/nested/gt.style']
+
 blastx_args = {
+    'db': '/home/radovan/lexa/blastDB/data/gydb_proteins.fa',
+    'outfmt': 5,
     'num_threads': 3,
     'dbsize': 90000,
     'word_size': 2,

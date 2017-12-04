@@ -18,6 +18,9 @@ def main(input_fasta):
         print(e)
         sys.exit(1)
 
+    if not os.path.exists('data'):
+        os.makedirs('data')
+
     if not os.path.exists('tmp'):
         os.makedirs('tmp')
 

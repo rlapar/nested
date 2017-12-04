@@ -1,15 +1,20 @@
 import pprint
+import subprocess
+import config
 
 from BCBio import GFF
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
-from gt.core import *
-from gt.extended import *
-from gt.annotationsketch import *
-from gt.annotationsketch.custom_track import CustomTrack
-from gt.core.gtrange import Range
+try:
+    from gt.core import *
+    from gt.extended import *
+    from gt.annotationsketch import *
+    from gt.annotationsketch.custom_track import CustomTrack
+    from gt.core.gtrange import Range
+except ImportError:
+    print 'Warning: Could not import gt, sketch needs to be called externally!'
 
 #a contains b as subinterval
 def contains(a,b):
@@ -105,6 +110,11 @@ def createGFF(gene, nested):
         
 
 def visualize(gene_id):
+    if config.call_gt_sketch_externally:
+        process = subprocess.Popen([config.gt_sketch_path] + config.gt_sketch_args + ['data/{}.png'.format(gene_id)] + ['data/{}.gff'.format(gene_id)])    
+        return
+
+    #Visualize using python
     #Style
     style = Style()
     style.load_file('gt.style')
