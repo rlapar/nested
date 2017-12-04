@@ -2,6 +2,7 @@ import pprint
 import subprocess
 import config
 
+from Bio import SeqIO
 from BCBio import GFF
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -77,11 +78,22 @@ def createGFF(gene, nested):
         #Insert croppedIntervals
         children = nested[i]['direct_children_locations']
         cropped = crop(nested[i]['location'], children)
+
+
+        open('data/{}/TE/{}.fa'.format(gene['id'], i), 'w').close
+        subseq = Seq('')
+
         for subinterval in cropped:
+            subseq += gene['sequence'][subinterval[0]: (subinterval[1] + 1)]
             features.append(SeqFeature(FeatureLocation(subinterval[0],subinterval[1]), 
                                         type='te', 
                                         strand=0,
                                         qualifiers={'ID': 'TE {}'.format(i), 'Parent': 'TE_BASE {}'.format(i)}))
+        
+        with open('data/{}/TE/{}.fa'.format(gene['id'], i), 'a') as outfile:
+            SeqIO.write(SeqRecord(subseq, id=gene['id'], description='TE-{}'.format(i)),
+                        outfile,
+                        'fasta')
 
         #Insert elements (domains, ppt, pbs, ...)
         j = 0
@@ -105,13 +117,13 @@ def createGFF(gene, nested):
     rec.features = features
 
     #possible other formats as well
-    with open('data/' + gene['id'] + '.gff', 'w+') as out_handle:
+    with open('data/{}/'.format(gene['id']) + gene['id'] + '.gff', 'w+') as out_handle:
         gff = GFF.write([rec], out_handle)
         
 
 def visualize(gene_id):
     if config.call_gt_sketch_externally:
-        process = subprocess.Popen([config.gt_sketch_path] + config.gt_sketch_args + ['data/{}.png'.format(gene_id)] + ['data/{}.gff'.format(gene_id)])    
+        process = subprocess.Popen([config.gt_sketch_path] + config.gt_sketch_args + ['data/{}/{}.png'.format(gene_id, gene_id)] + ['data/{}/{}.gff'.format(gene_id, gene_id)])    
         return
 
     #Visualize using python
@@ -123,7 +135,7 @@ def visualize(gene_id):
     feature_index = FeatureIndexMemory()
 
     #add gff file
-    feature_index.add_gff3file('data/' + gene_id + '.gff')
+    feature_index.add_gff3file('data/{}/'.format(gene_id) + gene_id + '.gff')
 
     #create diagram for first sequence ID
     seqid = feature_index.get_first_seqid()
@@ -142,5 +154,5 @@ def visualize(gene_id):
     layout.sketch(canvas)
 
     #write to file
-    pngfile = 'data/' + gene_id + '.png'
+    pngfile = 'data/{}/'.format(gene_id) + gene_id + '.png'
     canvas.to_file(pngfile)
