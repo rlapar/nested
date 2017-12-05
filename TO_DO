@@ -1,7 +1,0 @@
-include progress bar, and batch size (if input too big)
-in every function check for failed entries (sketch.visualize, findDomains, runLTR)
-make folder hierarchy in data/
-every input fasta file has its own directory in data
-
-better feature visualization
-make sketch into class

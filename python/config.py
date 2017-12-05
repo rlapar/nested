@@ -13,7 +13,7 @@ ltr_finder_args += ['-w', '2'] #don't change, parsing format needed!
 ltr_finder_args += ['-a', ltr_finder_prosite_path]
 ltr_finder_args += ['-s', ltr_finder_tRNAdb_path]
 
-call_gt_sketch_externally = False
+call_gt_sketch_externally = True
 gt_sketch_path = 'gt'
 gt_sketch_args = ['sketch']
 gt_sketch_args += ['-width', '1400']
