@@ -6,24 +6,26 @@ from python.gene import Gene
 
 class Nester(object):
 	def __init__(self, sequence):
-		self._seqid = sequence.id
-		self._sequence = sequence.seq
+		self.seqid = sequence.id
+		self.sequence = sequence.seq
 		self.nestedList = []
 		self._findNestedTransposonList()
 
 	def _findNestedTransposonList(self):
-		self.nestedList = self._getUnexpandedTransposonList(self._sequence)
+		self.nestedList = self._getUnexpandedTransposonList(self.sequence)
 		self._expandTransposonList()
 
 	def _expandTransposonList(self):
 		for i in reversed(range(len(self.nestedList) - 1)):
 			for j in range(i + 1, len(self.nestedList)):
-				self.nestedList[j].location = intervals.expandInterval(self.nestedList[i].location, self.nestedList[j].location)
-				#TODO expand domains
-				#TODO expand ppt, pbs
+				self.nestedList[j].location = intervals.expand(self.nestedList[i].location, self.nestedList[j].location)
+				for domain in self.nestedList[j].features['domains']:
+					domain.location = intervals.expand(self.nestedList[i].location, domain.location)
+				self.nestedList[j].features['ppt'] = intervals.expand(self.nestedList[i].location, self.nestedList[j].features['ppt'])
+				self.nestedList[j].features['pbs'] = intervals.expand(self.nestedList[i].location, self.nestedList[j].features['pbs'])
 
 	def _getUnexpandedTransposonList(self, sequence):
-		gene = Gene(self._seqid, sequence)
+		gene = Gene(self.seqid, sequence)
 		bestCandidate = gene.getBestCandidate()
 		
 		if not bestCandidate:

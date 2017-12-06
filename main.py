@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import os
 import shutil
 import click
@@ -7,6 +8,7 @@ import click
 from Bio import SeqIO
 
 from python.nester import Nester
+from python import sketch
 
 def setup():
 	if not os.path.exists('data'):
@@ -27,23 +29,27 @@ def main(input_fasta, sketch_only):
 	#RUN
 	sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))
 	for sequence in sequences:
-		if not os.path.exists('data/{}'.format(sequence.id)):
-			os.makedirs('data/{}'.format(sequence.id))
-		if not os.path.exists('data/{}/TE'.format(sequence.id)):
-			os.makedirs('data/{}/TE'.format(sequence.id))
-		print('Running Nester for {}...'.format(sequence.id))
-		nester = Nester(sequence)
-
-		#TODO 
-		#createGFF nester.nestedList
-
-		#TODO 
-		#sketch only without nester
-
-		#remove
-		for a in nester.nestedList:
-			print(a.location)
-		#remove
+		try:
+			if not os.path.exists('data/{}'.format(sequence.id)):
+				os.makedirs('data/{}'.format(sequence.id))
+			if not os.path.exists('data/{}/TE'.format(sequence.id)):
+				os.makedirs('data/{}/TE'.format(sequence.id))
+			print('Running Nester for {}...'.format(sequence.id))
+			
+			if not sketch_only:
+				nester = Nester(sequence)
+				#for a in nester.nestedList:
+				#	print(a)
+				#	for b in a.features['domains']:
+				#		print('--------------------')
+				#		print(b)
+				#	print('##########################')
+				sketch.createGFF(sequence.id, sequence.seq, nester.nestedList)
+			sketch.sketch(sequence.id)
+		except KeyboardInterrupt:
+			raise
+		#except:
+		#	print('Unexpected error:', sys.exc_info()[0])			
 
 	cleanup()
 

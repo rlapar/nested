@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+import copy
+
 from python import te as pythonTe
 from python import domain as pythonDomain
+from python.transposonGraph import TransposonGraph
 
 class Gene(object):
 	def __init__(self, seqid=None, sequence=None):
@@ -29,13 +32,7 @@ class Gene(object):
 		return self.teList[scores.index(max(scores))]		
 
 	def _evaluateTe(self, te):
-		#TODO scores and features (domains)
-		#TODO genegraph
-
-		#graph = Genegraph()
-		#score, features = graph.getScore()
-
-		te.score = 1 / float(te.location[1] - te.location[0])
-		te.features = None
-
+		graph = TransposonGraph(te, self.domainList)
+		te.score, te.features = graph.getScore()
+		te.score /= float(te.location[1] - te.location[0])
 		return te.score

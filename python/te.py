@@ -13,13 +13,24 @@ class TE(object):
 		self.ppt = entry['ppt']
 		self.pbs = entry['pbs']
 		self.location = entry['location']
+		self.ltrLeftLocation = [
+			entry['location'][0],
+			entry['location'][0] + int(entry['ltr len'].split(',')[0])
+		]
+		self.ltrRightLocation = [
+			entry['location'][1] - int(entry['ltr len'].split(',')[1]),
+			entry['location'][1]
+		]
 		self.features = None
 		self.score = None
 
 	def __str__(self):
 		lines = ['{{location = {},'.format(self.location),
+				 ' left ltr = {},'.format(self.ltrLeftLocation),
+				 ' right ltr = {},'.format(self.ltrRightLocation),
 				 ' ppt = {},'.format(self.ppt),
 				 ' pbs = {},'.format(self.pbs),
+				 #' features = {},'.format(self.features),
 				 ' score = {}}}'.format(self.score)]
 		return '\n'.join(lines)
 
