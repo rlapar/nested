@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from Bio import SeqIO
@@ -83,5 +84,8 @@ def createGFF(id, sequence, nestedList):
         GFF.write([rec], out_handle)
 
 def sketch(id):
-    process = subprocess.Popen([config.gt_sketch_path] + config.gt_sketch_args + ['data/{}/{}.png'.format(id, id)] + ['data/{}/{}.gff'.format(id, id)])
+    null = open(os.devnull, 'w')
+    process = subprocess.check_output([config.gt_sketch_path] + config.gt_sketch_args + ['data/{}/{}.png'.format(id, id)] + ['data/{}/{}.gff'.format(id, id)], stderr=null)
+    
+
 
