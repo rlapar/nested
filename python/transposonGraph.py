@@ -12,18 +12,20 @@ from python import intervals
 #[LTR, PBS, GAG, AP, RT, RNaseH, INT, PPT, LTR]
 
 class TransposonGraph(object):
+    """Transposon graph constructed from one ltr pair and list of domains of one gene.
+    """
     def __init__(self, te, domainList):
         self._graph = None
         self._buildGraph(te, domainList)
 
-    def _buildGraph(self, te, domainList):
+    def _buildGraph(self, te, domainList): #build graphs
         #TODO
         #check negative strands
         self._graph = nx.DiGraph()
         self._addNodes(te, domainList)
         self._addEdges()
 
-    def _addNodes(self, te, domainsList):
+    def _addNodes(self, te, domainsList): #add all necessary nodes
         #LTR nodes
         self._graph.add_node(
             n='ltr_left',
@@ -97,12 +99,12 @@ class TransposonGraph(object):
 
                 i += 1
 
-    def _addEdges(self):
+    def _addEdges(self): #add all necessary edges
         for node1 in self._graph.nodes(data=True):
             for node2 in self._graph.nodes(data=True):
                 self._addEdge(node1, node2)
 
-    def _addEdge(self, node1, node2):
+    def _addEdge(self, node1, node2): #add edge between nodes
         if node1 == node2 or node1[1]['node_class'] == node2[1]['node_class']:
             return
         
@@ -119,7 +121,12 @@ class TransposonGraph(object):
             else:
                 self._graph.add_edge(node1[0], node2[0], weight=1000 * 2 * (-diff))
 
-    def getScore(self):
+    """Find best evaluated path and return its score
+
+    Returns:
+        float: score
+    """
+    def getScore(self): 
         pathScore = 0
         pathFeatures = {
             'domains': [],

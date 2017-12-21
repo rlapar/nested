@@ -10,6 +10,13 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 from python import config
 from python import intervals
 
+"""Create GFF file for gt sketch
+
+Arguments:
+    id (str): gene id
+    sequence(Bio.Seq.Seq): sequence
+    nestedList(list[TE]): list of nested transposons
+"""
 def createGFF(id, sequence, nestedList):
     #find closest parent
     parents = [-1] * len(nestedList)
@@ -79,10 +86,14 @@ def createGFF(id, sequence, nestedList):
 
     rec.features = features
     
-    #other formats possible
     with open('data/{}/{}.gff'.format(id, id), 'w+') as out_handle:
         GFF.write([rec], out_handle)
 
+"""Sketch gene from GFF file
+
+Arguments:
+    id (str): gene id
+"""
 def sketch(id):
     null = open(os.devnull, 'w')
     process = subprocess.check_output([config.gt_sketch_path] + config.gt_sketch_args + ['data/{}/{}.png'.format(id, id)] + ['data/{}/{}.gff'.format(id, id)], stderr=null)

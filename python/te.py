@@ -9,6 +9,17 @@ from Bio.SeqRecord import SeqRecord
 from python import config
 
 class TE(object):
+	"""Class representing TE.
+
+	Attributes:
+		ppt (list): location of ppt
+		pbs (list): location of pbs
+		location (list): position of TE in gene
+		ltrLeftLocation (list): location of left ltr
+		ltrRightLocation (list): location of right ltr
+		features (dict): dictionary of features assigned to TE (i.e. list of domains on the optimal path in graph)
+		score (float): evaluated score of TE
+	"""
 	def __init__(self, entry=None):
 		self.ppt = entry['ppt']
 		self.pbs = entry['pbs']
@@ -34,6 +45,15 @@ class TE(object):
 				 ' score = {}}}'.format(self.score)]
 		return '\n'.join(lines)
 
+"""Run LTR finder on sequence and return list of transposons
+
+Arguments:
+	seqid (str): sequence id
+	sequence (Bio.Seq.Seq): sequence
+
+Returns:
+	list[TE]: list of found ltr pairs as a TE class
+"""
 def runLtrFinder(seqid, sequence):
 	transposons = []
 
@@ -55,6 +75,14 @@ def runLtrFinder(seqid, sequence):
 
 	return transposons
 
+"""Parse raw output from LTR finder
+
+Arguments:
+	output (str): ltr finder raw output (w -2)
+
+Returns:
+	dict: parsed raw output
+"""
 def parseRawOutput(output):
 	ltrOutput = None
 	entries = output.decode('utf-8').split('>Sequence: ')
@@ -66,6 +94,14 @@ def parseRawOutput(output):
 
 	return None
 
+"""Parse raw ltr table
+
+Arguments:
+	rawTable (str): raw table
+
+Returns:
+	dict: parsed table
+"""
 def parseLtrTable(rawTable):
 	re_interval = re.compile('[0-9N]+[-][0-9N]+')
 	#re_int = re.compile('[0-9N]+')
@@ -92,7 +128,7 @@ def parseLtrTable(rawTable):
 					transposon[str.lower(tHead[i])] = attributes[i]
 
 		transposons.append(transposon)
-                
+
 	return transposons
 
 

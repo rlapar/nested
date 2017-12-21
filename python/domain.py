@@ -8,6 +8,16 @@ from Bio.Blast.Applications import NcbiblastxCommandline
 from python import config
 
 class Domain(object):
+	"""Class representing domain in parsed from blastx output.
+
+	Atrributes:
+		evalue (float): evalue (same as blastx output)
+		frame (tuple): frame (same as blastx output)
+		score (float): score (same as blastx output)
+		title (str): title (same as blastx output)
+		location (list): location [from, to] (from > to for complementary strand)
+		type (str): type of domain (AP, GAG, INT, ...)
+	"""
 	def __init__(self, evalue=None, frame=None, score=None, title=None, location=None, domainType=None):
 		self.evalue = evalue
 		self.frame = frame
@@ -26,6 +36,14 @@ class Domain(object):
 				 ' score = {}}}'.format(self.score)]
 		return '\n'.join(lines)
 
+"""Run blastx and get the list of found domains
+
+Arguments:
+	sequence (Bio.Seq.Seq): sequence
+
+Returns:
+	list[Domain]: list of matched domains
+"""
 def runBlastx(sequence):
 	domains = []
 

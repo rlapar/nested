@@ -24,7 +24,7 @@ def cleanup():
 
 @click.command()
 @click.option('--input_fasta', '-i', required=True, type=str, help='Input fasta file.')
-@click.option('--sketch_only', '-s', is_flag=True)
+@click.option('--sketch_only', '-s', is_flag=True, help='If true, nesting is not computed. Genes are sketched only from existing gff files.')
 def main(input_fasta, sketch_only):
 	numberOfErrors = 0
 	startTime = datetime.now()
@@ -61,4 +61,4 @@ def main(input_fasta, sketch_only):
 	print('Number of errors: {}'.format(numberOfErrors))
 
 if __name__ == '__main__':
-    main()
+	main()

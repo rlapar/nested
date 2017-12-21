@@ -7,6 +7,15 @@ from python import domain as pythonDomain
 from python.transposonGraph import TransposonGraph
 
 class Gene(object):
+	"""Class representing a genereic gene in the program. Used in recursive calls, contain information about the gene domains and found TE's
+
+	Attributes:
+		seqid (str): id of sequence 
+		sequence (Bio.Seq.Seq): sequence
+		teList (list[TE]): list of pairs of LTR's found from LTR finder
+		domainList (list[Domain]): list of found domains
+	
+	"""
 	def __init__(self, seqid=None, sequence=None):
 		self.seqid = seqid
 		self.sequence = sequence
@@ -21,6 +30,11 @@ class Gene(object):
 				 ' domainList.size = {}}}'.format(len(self.domainList))]
 		return '\n'.join(lines)
 
+	"""Evaluate all LTR pairs and return best scored pair
+
+	Returns:
+		TE: best evaluated pair
+	"""
 	def getBestCandidate(self):
 		scores = []
 		for te in self.teList:
@@ -31,7 +45,7 @@ class Gene(object):
 
 		return self.teList[scores.index(max(scores))]		
 
-	def _evaluateTe(self, te):
+	def _evaluateTe(self, te): #evaluate LTR pair using graph, set up score and features
 		graph = TransposonGraph(te, self.domainList)
 		te.score, te.features = graph.getScore()
 		te.score /= float(te.location[1] - te.location[0])
