@@ -109,17 +109,30 @@ class TransposonGraph(object):
             return
         
         copia = ['ltr_left', 'pbs', 'GAG', 'AP', 'INT', 'RT', 'RNaseH', 'ppt', 'ltr_right']
+        gypsy = ['ltr_left', 'pbs', 'GAG', 'AP', 'RT', 'RNaseH', 'INT', 'ppt', 'ltr_right']
         #node1 before node2
         if intervals.compare(node1[1]['location'], node2[1]['location']) != 1:
-            index1 = copia.index(node1[1]['node_class'])
-            index2 = copia.index(node2[1]['node_class'])
-            diff = index2 - index1
-            if diff == 1:
+            copia_index1 = copia.index(node1[1]['node_class'])
+            copia_index2 = copia.index(node2[1]['node_class'])
+            gypsy_index1 = gypsy.index(node1[1]['node_class'])
+            gypsy_index2 = gypsy.index(node2[1]['node_class'])
+
+            copia_diff = copia_index2 - copia_index1
+            if copia_diff == 1:
                 self._graph.add_edge(node1[0], node2[0], weight=float(1)/node2[1]['score'])
-            elif diff > 1:
-                self._graph.add_edge(node1[0], node2[0], weight=1000 * diff)
+            elif copia_diff > 1:
+                self._graph.add_edge(node1[0], node2[0], weight=1000 * copia_diff)
             else:
-                self._graph.add_edge(node1[0], node2[0], weight=1000 * 2 * (-diff))
+                self._graph.add_edge(node1[0], node2[0], weight=1000 * 2 * (-copia_diff))
+
+            gypsy_diff = gypsy_index1 - gypsy_index2
+            if gypsy_diff != copia_diff:                
+                if gypsy_diff == 1:
+                    self._graph.add_edge(node1[0], node2[0], weight=float(1)/node2[1]['score'])
+                elif gypsy_diff > 1:
+                    self._graph.add_edge(node1[0], node2[0], weight=1000 * gypsy_diff)
+                else:
+                    self._graph.add_edge(node1[0], node2[0], weight=1000 * 2 * (-gypsy_diff))
 
     """Find best evaluated path and return its score
 
