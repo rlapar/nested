@@ -36,15 +36,15 @@ class Domain(object):
 				 ' score = {}}}'.format(self.score)]
 		return '\n'.join(lines)
 
-"""Run blastx and get the list of found domains
-
-Arguments:
-	sequence (Bio.Seq.Seq): sequence
-
-Returns:
-	list[Domain]: list of matched domains
-"""
 def runBlastx(sequence):
+	"""Run blastx and get the list of found domains
+
+	Arguments:
+		sequence (Bio.Seq.Seq): sequence
+
+	Returns:
+		list[Domain]: list of matched domains
+	"""
 	domains = []
 
 	blastx_cline = NcbiblastxCommandline(**config.blastx_args)

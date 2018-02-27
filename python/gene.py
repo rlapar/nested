@@ -30,12 +30,12 @@ class Gene(object):
 				 ' domainList.size = {}}}'.format(len(self.domainList))]
 		return '\n'.join(lines)
 
-	"""Evaluate all LTR pairs and return best scored pair
-
-	Returns:
-		TE: best evaluated pair
-	"""
 	def getBestCandidate(self):
+		"""Evaluate all LTR pairs and return best scored pair
+
+		Returns:
+			TE: best evaluated pair
+		"""
 		scores = []
 		for te in self.teList:
 			scores.append(self._evaluateTe(te))

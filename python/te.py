@@ -45,16 +45,16 @@ class TE(object):
 				 ' score = {}}}'.format(self.score)]
 		return '\n'.join(lines)
 
-"""Run LTR finder on sequence and return list of transposons
-
-Arguments:
-	seqid (str): sequence id
-	sequence (Bio.Seq.Seq): sequence
-
-Returns:
-	list[TE]: list of found ltr pairs as a TE class
-"""
 def runLtrFinder(seqid, sequence):
+	"""Run LTR finder on sequence and return list of transposons
+
+	Arguments:
+		seqid (str): sequence id
+		sequence (Bio.Seq.Seq): sequence
+
+	Returns:
+		list[TE]: list of found ltr pairs as a TE class
+	"""
 	transposons = []
 
 	#prepare tmp fasta file for sequence
@@ -75,16 +75,15 @@ def runLtrFinder(seqid, sequence):
 
 	return transposons
 
-"""Parse raw output from LTR finder
-
-Arguments:
-	output (str): ltr finder raw output (w -2)
-
-Returns:
-	dict: parsed raw output
-"""
 def parseRawOutput(output):
-	ltrOutput = None
+	"""Parse raw output from LTR finder
+
+	Arguments:
+		output (str): ltr finder raw output (w -2)
+
+	Returns:
+		dict: parsed raw output
+	"""
 	entries = output.decode('utf-8').split('>Sequence: ')
 	for e in entries:
 		entryName = e.split(' ')[0]
@@ -94,15 +93,15 @@ def parseRawOutput(output):
 
 	return None
 
-"""Parse raw ltr table
-
-Arguments:
-	rawTable (str): raw table
-
-Returns:
-	dict: parsed table
-"""
 def parseLtrTable(rawTable):
+	"""Parse raw ltr table
+
+	Arguments:
+		rawTable (str): raw table
+
+	Returns:
+		dict: parsed table
+	"""
 	re_interval = re.compile('[0-9N]+[-][0-9N]+')
 	#re_int = re.compile('[0-9N]+')
 	#re_float = re.compile('(\d+\.\d*)|N')
