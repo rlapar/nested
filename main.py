@@ -9,8 +9,8 @@ from subprocess import CalledProcessError
 
 from Bio import SeqIO
 
-from python.nester import Nester
-from python import sketch
+from nested.core.nester import Nester
+from nested.output.sketcher import Sketcher
 
 def setup():
 	if not os.path.exists('data'):
@@ -40,20 +40,21 @@ def main(input_fasta, sketch_only):
 			if not os.path.exists('data/{}/TE'.format(sequence.id)):
 				os.makedirs('data/{}/TE'.format(sequence.id))
 			
+			sketcher = Sketcher()
 			if not sketch_only:
 				nester = Nester(sequence)
-				sketch.createGFF(sequence.id, sequence.seq, nester.nestedList)
-			sketch.sketch(sequence.id)
+				sketcher.create_gff(nester.nested_element)
+			sketcher.sketch(sequence.id)
 			seqEndTime = datetime.now()
 			print('Processing {}: done [{}]'.format(sequence.id, seqEndTime - seqStartTime))	
 		except KeyboardInterrupt:
 			raise
-		except CalledProcessError:
-			numberOfErrors += 1
-			print('Processing {}: SUBPROCESS ERROR'.format(sequence.id))		
-		except:
-			numberOfErrors += 1
-			print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id), sys.exc_info()[0])		
+		#except CalledProcessError:
+		#	numberOfErrors += 1
+		#	print('Processing {}: SUBPROCESS ERROR'.format(sequence.id))		
+		#except:
+		#	numberOfErrors += 1
+		#	print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id), sys.exc_info()[0])		
 
 	cleanup()
 	endTime = datetime.now()
