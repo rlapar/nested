@@ -20,7 +20,7 @@ class TE(object):
         features (dict): dictionary of features assigned to TE (i.e. list of domains on the optimal path in graph)
         score (float): evaluated score of TE
     """
-    def __init__(self, ppt=None, pbs=None, location=None, ltr_left_location=None, ltr_right_location=None, features=None, score=None):
+    def __init__(self, ppt=None, pbs=None, location=None, ltr_left_location=None, ltr_right_location=None, features={}, score=None):
         self.ppt = ppt
         self.pbs = pbs
         self.location = location

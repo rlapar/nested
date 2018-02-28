@@ -77,13 +77,13 @@ def expand(source, target):
         target[1] += length
     return target
 
-def expandList(intervalList):
+def expand_list(interval_list):
     """Expand intervals by the prevoius ones starting from the end
 
     Arguments:
-        intervalList(list): list of intervals to expand
+        interval_list(list): list of intervals to expand
     """
-    for i in reversed(range(len(intervalList) - 1)):
-        for j in range(i + 1, len(intervalList)):
-            intervalList[j] = expand(intervalList[i], intervalList[j])
-    return intervalList
+    for i in reversed(range(len(interval_list) - 1)):
+        for j in range(i + 1, len(interval_list)):
+            interval_list[j] = expand(interval_list[i], interval_list[j])
+    return interval_list
