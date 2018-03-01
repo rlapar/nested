@@ -20,7 +20,7 @@ class Generator(object):
         self._source_db = source_db
         self.elements = []
 
-    def generate_random_nested_element(self, baselength=0, number_of_iterations=1, filter_string='LTR'):
+    def generate_random_nested_element(self, baselength=10, number_of_iterations=1, filter_string='LTR'):
         sequences = list(SeqIO.parse(open(self._source_db), 'fasta'))
         sequences = list(filter(lambda x: filter_string in x.id, sequences))
 
@@ -48,7 +48,7 @@ class Generator(object):
         element = NestedElement(element_id, element_sequence, nested_tes)
         self.elements.append(element)       
 
-    def generate_random_nested_elements(self, number_of_elements=1, baselength=0, number_of_iterations=1, filter_string='LTR'):
+    def generate_random_nested_elements(self, number_of_elements=1, baselength=10, number_of_iterations=1, filter_string='LTR'):
         for i in range(number_of_elements):
             self.generate_random_nested_element(baselength=baselength, number_of_iterations=number_of_iterations, filter_string=filter_string)
 

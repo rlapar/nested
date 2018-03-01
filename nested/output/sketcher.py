@@ -18,9 +18,17 @@ class Sketcher(object):
     def __init__(self):
         pass
 
+    def _create_dirs(self, element_id, dirpath):
+        if not os.path.exists('{}/{}'.format(dirpath, element_id)):
+            os.makedirs('{}/{}'.format(dirpath, element_id))
+        if not os.path.exists('{}/{}/TE'.format(dirpath, element_id)):
+            os.makedirs('{}/{}/TE'.format(dirpath, element_id))
+
     def create_gff(self, nested_element, dirpath=None):
         if not dirpath:
             dirpath = DEFAULT_DIRPATH
+
+        self._create_dirs(nested_element.id, dirpath)
 
         #find closes parent
         nl = nested_element.nested_list
@@ -105,6 +113,7 @@ class Sketcher(object):
     def sketch(self, id, dirpath=None):
         if not dirpath:
             dirpath = DEFAULT_DIRPATH
+        #self._create_dirs(id, dirpath)
         null = open(os.devnull, 'w')
         process = subprocess.check_output(
             [config.gt_sketch_path] + 
