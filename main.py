@@ -43,6 +43,7 @@ def main(input_fasta, sketch_only, generate_from_fasta, baselength, number_of_it
 	if input_fasta:
 		sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))
 		for sequence in sequences:
+			sequence.id = sequence.id.replace('/', '--')
 			seq_start_time = datetime.now()
 			print('Processing {}...'.format(sequence.id), end='\r')
 			try:						
