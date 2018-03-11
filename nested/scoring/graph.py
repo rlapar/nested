@@ -4,32 +4,33 @@ import math
 import copy
 import networkx as nx
 
-from python import intervals
+from nested.utils import intervals
 
 #COPIA
 #[LTR, PBS, GAG, AP, INT, RT, RNaseH, PPT, LTR]
 #GYPSY
 #[LTR, PBS, GAG, AP, RT, RNaseH, INT, PPT, LTR]
 
-class TransposonGraph(object):
-    """Transposon graph constructed from one ltr pair and list of domains of one gene.
+class Graph(object):
+    """Transposon path graph used to evaluate domain position and penalize incorrect order.
+    It is constructed from one ltr pair and a list of domains found in gene.
     """
-    def __init__(self, te, domainList):
+    def __init__(self, te, domain_list):
         self._graph = None
-        self._buildGraph(te, domainList)
+        self._build_graph(te, domain_list)
 
-    def _buildGraph(self, te, domainList): #build graphs
+    def _build_graph(self, te, domain_list): #build graphs
         #TODO
         #check negative strands
         self._graph = nx.DiGraph()
-        self._addNodes(te, domainList)
-        self._addEdges()
+        self._add_nodes(te, domain_list)
+        self._add_edges()
 
-    def _addNodes(self, te, domainsList): #add all necessary nodes
+    def _add_nodes(self, te, domain_list): #add all necessary nodes
         #LTR nodes
         self._graph.add_node(
             n='ltr_left',
-            location=te.ltrLeftLocation,
+            location=te.ltr_left_location,
             score=1,
             node_class='ltr_left',
             strand='0',
@@ -38,7 +39,7 @@ class TransposonGraph(object):
 
         self._graph.add_node(
             n='ltr_right',
-            location=te.ltrRightLocation,
+            location=te.ltr_right_location,
             score=1,
             node_class='ltr_right',
             strand='0',
@@ -52,8 +53,8 @@ class TransposonGraph(object):
             if location[0] > location[1]: 
                 location = [location[1], location[0]]
                 strand = '-'
-            if (intervals.compare(te.ltrLeftLocation, location) != 1
-              and intervals.compare(location, te.ltrRightLocation) != 1):
+            if (intervals.compare(te.ltr_left_location, location) != 1
+              and intervals.compare(location, te.ltr_right_location) != 1):
                 self._graph.add_node(
                     n='ppt',
                     location=location,
@@ -69,8 +70,8 @@ class TransposonGraph(object):
             if location[0] > location[1]: 
                 location = [location[1], location[0]]
                 strand = '-'
-            if (intervals.compare(te.ltrLeftLocation, location) != 1
-              and intervals.compare(location, te.ltrRightLocation) != 1):
+            if (intervals.compare(te.ltr_left_location, location) != 1
+              and intervals.compare(location, te.ltr_right_location) != 1):
                 self._graph.add_node(
                     n='pbs',
                     location=location,
@@ -83,11 +84,11 @@ class TransposonGraph(object):
         #DOMAINS
         #TODO negative strands
         i = 0
-        for domain in domainsList:
+        for domain in domain_list:
             if domain.type not in ['GAG', 'AP', 'INT', 'RT', 'RNaseH']:
                 continue
-            if (intervals.compare(te.ltrLeftLocation, domain.location) != 1
-              and intervals.compare(domain.location, te.ltrRightLocation) != 1):
+            if (intervals.compare(te.ltr_left_location, domain.location) != 1
+              and intervals.compare(domain.location, te.ltr_right_location) != 1):
                 self._graph.add_node(
                     n='domain_{}'.format(i),
                     location=domain.location,
@@ -99,12 +100,12 @@ class TransposonGraph(object):
 
                 i += 1
 
-    def _addEdges(self): #add all necessary edges
+    def _add_edges(self): #add all necessary edges
         for node1 in self._graph.nodes(data=True):
             for node2 in self._graph.nodes(data=True):
-                self._addEdge(node1, node2)
+                self._add_edge(node1, node2)
 
-    def _addEdge(self, node1, node2): #add edge between nodes
+    def _add_edge(self, node1, node2): #add edge between nodes
         if node1 == node2 or node1[1]['node_class'] == node2[1]['node_class']:
             return
         
@@ -125,6 +126,7 @@ class TransposonGraph(object):
             else:
                 self._graph.add_edge(node1[0], node2[0], weight=1000 * 2 * (-copia_diff))
 
+            """
             gypsy_diff = gypsy_index1 - gypsy_index2
             if gypsy_diff != copia_diff:                
                 if gypsy_diff == 1:
@@ -133,15 +135,11 @@ class TransposonGraph(object):
                     self._graph.add_edge(node1[0], node2[0], weight=1000 * gypsy_diff)
                 else:
                     self._graph.add_edge(node1[0], node2[0], weight=1000 * 2 * (-gypsy_diff))
+            """
 
-    """Find best evaluated path and return its score
-
-    Returns:
-        float: score
-    """
-    def getScore(self): 
-        pathScore = 0
-        pathFeatures = {
+    def get_score(self): 
+        path_score = 0
+        path_features = {
             'domains': [],
             'pbs': [float('nan'), float('nan')],
             'ppt': [float('nan'), float('nan')]
@@ -153,10 +151,11 @@ class TransposonGraph(object):
         features = nx.get_node_attributes(self._graph, 'features')
 
         for node in path:
-            pathScore += scores[node]
+            path_score += scores[node]
             if node == 'pbs' or node == 'ppt':
-                pathFeatures[node] = locations[node]
+                path_features[node] = locations[node]
             else:
-                pathFeatures['domains'].append(features[node]['domain'])
+                path_features['domains'].append(features[node]['domain'])
 
-        return pathScore, pathFeatures
+        return path_score, path_features
+
