@@ -29,7 +29,7 @@ class Graph(object):
     def _add_nodes(self, te, domain_list): #add all necessary nodes
         #LTR nodes
         self._graph.add_node(
-            n='ltr_left',
+            'ltr_left',
             location=te.ltr_left_location,
             score=1,
             node_class='ltr_left',
@@ -38,7 +38,7 @@ class Graph(object):
         )
 
         self._graph.add_node(
-            n='ltr_right',
+            'ltr_right',
             location=te.ltr_right_location,
             score=1,
             node_class='ltr_right',
@@ -56,7 +56,7 @@ class Graph(object):
             if (intervals.compare(te.ltr_left_location, location) != 1
               and intervals.compare(location, te.ltr_right_location) != 1):
                 self._graph.add_node(
-                    n='ppt',
+                    'ppt',
                     location=location,
                     score=1,
                     node_class='ppt',
@@ -73,7 +73,7 @@ class Graph(object):
             if (intervals.compare(te.ltr_left_location, location) != 1
               and intervals.compare(location, te.ltr_right_location) != 1):
                 self._graph.add_node(
-                    n='pbs',
+                    'pbs',
                     location=location,
                     score=1,
                     node_class='pbs',
@@ -90,7 +90,7 @@ class Graph(object):
             if (intervals.compare(te.ltr_left_location, domain.location) != 1
               and intervals.compare(domain.location, te.ltr_right_location) != 1):
                 self._graph.add_node(
-                    n='domain_{}'.format(i),
+                    'domain_{}'.format(i),
                     location=domain.location,
                     score=domain.score,
                     node_class=domain.type,

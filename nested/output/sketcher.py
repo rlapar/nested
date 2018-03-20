@@ -9,7 +9,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
-import config
+from nested.config import config
 from nested.utils import intervals
 
 DEFAULT_DIRPATH = 'data'

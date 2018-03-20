@@ -1,0 +1,7 @@
+bcbio-gff==0.6.4
+biopython==1.70
+click==6.7
+decorator==4.2.1
+networkx==2.1
+numpy==1.14.2
+six==1.11.0

@@ -23,10 +23,10 @@ class Gene(object):
 
 	def __str__(self):
 		strlen = 15
-		lines = ['{{id = {},'.format(self.seqid),
+		lines = ['{{id = {a}{b},'.format(a=self.seqid[:strlen], b='...' if len(self.sequence) > strlen else ''),
 				 ' sequence = {a}{b},'.format(a=self.sequence[:strlen], b='...' if len(self.sequence) > strlen else ''),
-				 ' teList.size = {},'.format(len(self.te_list)),
-				 ' domainList.size = {}}}'.format(len(self.domain_list))]
+				 ' te_list.size = {},'.format(len(self.te_list)),
+				 ' domain_list.size = {}}}'.format(len(self.domain_list))]
 		return '\n'.join(lines)
 
 	def get_best_candidate(self):
