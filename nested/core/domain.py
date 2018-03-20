@@ -5,7 +5,7 @@ from io import StringIO
 from Bio.Blast import NCBIXML
 from Bio.Blast.Applications import NcbiblastxCommandline
 
-import config
+from nested.config import config
 
 class Domain(object):
 	"""Class representing domain parsed from blastx output.

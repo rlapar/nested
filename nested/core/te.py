@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+import os
 import subprocess
 import re
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-import config
+from nested.config import config
 
 class TE(object):
     """Class representing TE. Every location is in format [from, to].
@@ -45,21 +46,30 @@ def run_ltr_finder(seqid, sequence):
     Arguments:
         seqid (str): sequence id
         sequence (Bio.Seq.Seq): sequence
+        tmp_dir (str): Auxiliary existing directory
 
     Returns:
         list[TE]: list of found ltr pairs as a TE class
     """
     transposons = []
 
-    with open('tmp/tmp_{}.fa'.format(seqid), 'w+') as tmp_file: #prepare tmp fasta file for ltr finder
+    if not os.path.exists('/tmp/nested'):
+    	os.makedirs('/tmp/nested')
+
+    if not os.path.exists('/tmp/nested/ltr'):
+        	os.makedirs('/tmp/nested/ltr')
+
+    with open('/tmp/nested/ltr/{}.fa'.format(seqid), 'w+') as tmp_file: #prepare tmp fasta file for ltr finder
         SeqIO.write(SeqRecord(sequence, id=seqid),
                     tmp_file,
                     'fasta')
 
     #call LTR finder and feed stdin to it
-    process = subprocess.Popen([config.ltr_finder_path] + config.ltr_finder_args + ['tmp/tmp_{}.fa'.format(seqid)], 
+    process = subprocess.Popen([config.ltr_finder_path] + config.ltr_finder_args + ['/tmp/nested/ltr/{}.fa'.format(seqid)], 
                                 stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE)    
+                                stderr=subprocess.PIPE) 
+
+    #os.remove('/tmp/nested/ltr/{}.fa'.format(seqid))   
 
     stdout, stderr = process.communicate()
     parsed_output = parse_raw_output(stdout)
