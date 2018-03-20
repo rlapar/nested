@@ -15,7 +15,7 @@ from nested.output.sketcher import Sketcher
 @click.option('--sketch_only', '-s', is_flag=True, help='If true, nesting is not computed. Genes are sketched only from existing gff files.')
 @click.option('--data_folder', '-d', type=str, help='Output data folder.')
 #TODO DATA_FOLDER
-def main(input_fasta, sketch_only):
+def main(input_fasta, sketch_only, data_folder):
     number_of_errors = 0
     start_time = datetime.now()
     sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))

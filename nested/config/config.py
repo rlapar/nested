@@ -16,7 +16,7 @@ ltr_finder_args += ['-s', ltr_finder_tRNAdb_path]
 gt_sketch_path = 'gt'
 gt_sketch_args = ['sketch']
 gt_sketch_args += ['-width', '1400']
-gt_sketch_args += ['-style', '/home/radovan/git/nested/gt.style']
+gt_sketch_args += ['-style', '/home/radovan/git/nested/nested/config/gt.style']
 
 blastx_args = {
     'db': '/home/radovan/lexa/blastDB/data/gydb_proteins.fa',
