@@ -25,10 +25,24 @@ def contains(a, b):
         a(list): interval to check
         b(list): query subinterval
 
-    Returs:
+    Returns:
         bool: True if b is complete subinterval of a
     """
     return a[0] <= b[0] and a[1] >= b[1]
+
+def intersect(a, b):
+    """Checks if a and b has any intersection
+
+    Arguments:
+        a(list):
+        b(list)
+
+    Returns:
+        bool: True if they have intersection
+    """
+    return ((a[0] <= b[1] and a[0] >= b[0]) or
+            (a[1] <= b[1] and a[1] >= b[0]) or
+            (contains(a, b)))
 
 def remove(a, b):
     """Remove a from b
@@ -37,7 +51,7 @@ def remove(a, b):
         a(list): interval to remove
         b(list): interval to be removed from
 
-    Returs:
+    Returns:
         list: b with a removed
     """
     return [[b[0],a[0]], [a[1], b[1]]]
@@ -82,6 +96,9 @@ def expand_list(interval_list):
 
     Arguments:
         interval_list(list): list of intervals to expand
+
+    Returns:
+        list: list of expanded intervals
     """
     for i in reversed(range(len(interval_list) - 1)):
         for j in range(i + 1, len(interval_list)):
