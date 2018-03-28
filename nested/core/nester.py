@@ -25,13 +25,39 @@ class Nester(object):
 
     def _get_unexpanded_transposon_list(self, sequence): #recursivelly find and crop best evaluated transposon, return unexpanded list of found transposons
         gene = Gene(self.seqid, sequence)
-        best_candidate = gene.get_best_candidate()
-        if not best_candidate:
-            return []
-        nested_list = [best_candidate]
-        #crop TE and call recursivelly
-        cropped_sequence = sequence[:(best_candidate.location[0] - 1)] + sequence[(best_candidate.location[1] + 1):]
+        candidates = gene.get_candidates_above_threshold()
+        if not candidates:
+            best_candidate = gene.get_best_candidate()
+            if not best_candidate:
+                return []
+            candidates = [best_candidate]
+
+        #sort by score (from highest)
+        candidates.sort(key=lambda x: x.score, reverse=True)        
+        #remove intersections
+        nested_list = []
+        for candidate in candidates:
+            choose = True
+            for element in nested_list:
+                if intervals.intersect(candidate.location, element.location):
+                    choose = False
+                    break
+            if choose:
+                nested_list.append(candidate)
+        #sort by location (reverse)
+        nested_list.sort(key=lambda x:x.location[0], reverse=True)
+        #crop from sequence
+        cropped_sequence = sequence
+
+        for element in nested_list:
+            cropped_sequence = cropped_sequence[:(element.location[0] - 1)] + cropped_sequence[(element.location[1] + 1):]
         nested_list += self._get_unexpanded_transposon_list(cropped_sequence)
+
+
+
+        #crop TE and call recursivelly
+        #cropped_sequence = sequence[:(best_candidate.location[0] - 1)] + sequence[(best_candidate.location[1] + 1):]
+        #nested_list += self._get_unexpanded_transposon_list(cropped_sequence)
         return nested_list
 
     def _expand_transposon_list(self, nested_list): #backwards expanding of intervals according to previously found and cropped elements

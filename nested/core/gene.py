@@ -13,6 +13,7 @@ class Gene(object):
 		sequence (Bio.Seq.Seq): sequence
 		te_list (list[TE]): list of pairs of LTR's found from LTR finder
 		domain_list (list[Domain]): list of found domains
+		scores (list[float]): list of evaluations of each TE
 	
 	"""
 	def __init__(self, seqid=None, sequence=None):
@@ -20,6 +21,8 @@ class Gene(object):
 		self.sequence = sequence
 		self.te_list = run_ltr_finder(seqid, sequence)
 		self.domain_list = run_blastx(sequence)
+		self.scores = []
+		self._evaluate_te_list()
 
 	def __str__(self):
 		strlen = 15
@@ -35,14 +38,20 @@ class Gene(object):
 		Returns:
 			TE: best evaluated pair
 		"""
-		scores = []
-		for te in self.te_list:
-			scores.append(self._evaluate_te(te))
-
-		if not scores:
+		if not self.scores:
 			return None
+		return self.te_list[self.scores.index(max(self.scores))]
 
-		return self.te_list[scores.index(max(scores))]
+	def get_candidates_above_threshold(self, threshold=0.15):
+		candidates = []
+		for i in range(len(self.te_list)):
+			if self.scores[i] >= threshold:
+				candidates.append(self.te_list[i])
+		return candidates
+
+	def _evaluate_te_list(self):
+		for te in self.te_list:
+			self.scores.append(self._evaluate_te(te))
 
 	def _evaluate_te(self, te):
 		#evaluate LTR pair using graph, set up score and features

@@ -37,9 +37,9 @@ def main(input_fasta, sketch_only, data_folder):
         except CalledProcessError:
             number_of_errors += 1
             print('Processing {}: SUBPROCESS ERROR'.format(sequence.id[:strlen]))
-        except:
-            number_of_errors += 1
-            print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id[:strlen]), sys.exc_info()[0]) 
+        #except:
+        #    number_of_errors += 1
+        #    print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id[:strlen]), sys.exc_info()[0]) 
 
 
     endTime = datetime.now()
