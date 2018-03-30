@@ -3,6 +3,8 @@
 from nested.utils import intervals
 from nested.core.gene import Gene
 from nested.core.nested_element import NestedElement
+from nested.logging.logger import NesterLogger
+from nested.config import config
 
 class Nester(object):
     """Class represent nesting in sequence, recursivelly find best evaluated transposon and crop it until no new transposons found
@@ -16,7 +18,9 @@ class Nester(object):
         self.seqid = sequence.id
         self.sequence = sequence.seq
         self.nested_element = None
-        self._find_nesting()
+        self._iteration = 0
+        self._logger = NesterLogger('{}/{}'.format(config.logdir, self.seqid))
+        self._find_nesting()                    
 
     def _find_nesting(self):
         nested_list = self._get_unexpanded_transposon_list(self.sequence) #find list of nested transposons
@@ -24,8 +28,9 @@ class Nester(object):
         self.nested_element = NestedElement(self.seqid, self.sequence, nested_list)
 
     def _get_unexpanded_transposon_list(self, sequence): #recursivelly find and crop best evaluated transposon, return unexpanded list of found transposons
+        self._iteration += 1
         gene = Gene(self.seqid, sequence)
-        candidates = gene.get_candidates_above_threshold()
+        candidates = gene.get_candidates_above_threshold(threshold=0)
         if not candidates:
             best_candidate = gene.get_best_candidate()
             if not best_candidate:
@@ -42,6 +47,12 @@ class Nester(object):
                 if intervals.intersect(candidate.location, element.location):
                     choose = False
                     break
+            for other_candidate in candidates:
+                if candidate.location == other_candidate.location:
+                    continue
+                if intervals.contains(candidate.location, other_candidate.location):
+                    choose = False
+                    break
             if choose:
                 nested_list.append(candidate)
         #sort by location (reverse)
@@ -51,13 +62,12 @@ class Nester(object):
 
         for element in nested_list:
             cropped_sequence = cropped_sequence[:(element.location[0] - 1)] + cropped_sequence[(element.location[1] + 1):]
-        nested_list += self._get_unexpanded_transposon_list(cropped_sequence)
 
+        #LOG
+        self._logger.log_iteration(self._iteration, nested_list)
+        
+        nested_list += self._get_unexpanded_transposon_list(cropped_sequence)       
 
-
-        #crop TE and call recursivelly
-        #cropped_sequence = sequence[:(best_candidate.location[0] - 1)] + sequence[(best_candidate.location[1] + 1):]
-        #nested_list += self._get_unexpanded_transposon_list(cropped_sequence)
         return nested_list
 
     def _expand_transposon_list(self, nested_list): #backwards expanding of intervals according to previously found and cropped elements
