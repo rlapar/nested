@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-import os
-import re
-
 from nested.utils import intervals
 from nested.core.gene import Gene
 from nested.core.nested_element import NestedElement
