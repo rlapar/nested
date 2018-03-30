@@ -26,4 +26,6 @@ blastx_args = {
     'word_size': 2,
     'evalue': 1
 }
+
+logdir = '/tmp/nested/logs'
 #ADD BLAST PARAMETERS
