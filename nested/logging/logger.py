@@ -47,4 +47,4 @@ class NesterLogger(Logger):
             for domain in nested_list[i].features['domains']:
                 iteration_entry += ('{}\n'.format(domain)) 
             iteration_entry += '\n\n'
-            super().log_entry(iteration_logfile_path, iteration_entry)
+        super().log_entry(iteration_logfile_path, iteration_entry)
