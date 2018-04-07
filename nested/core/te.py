@@ -7,7 +7,7 @@ import re
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-from nested.config import config
+from nested.config.config import config, args_dict_to_list
 
 class TE(object):
     """Class representing TE. Every location is in format [from, to].
@@ -65,7 +65,7 @@ def run_ltr_finder(seqid, sequence):
                     'fasta')
 
     #call LTR finder and feed stdin to it
-    process = subprocess.Popen([config.ltr_finder_path] + config.ltr_finder_args + ['/tmp/nested/ltr/{}.fa'.format(seqid)], 
+    process = subprocess.Popen([config['ltr']['path']] + args_dict_to_list(config['ltr']['args']) + ['/tmp/nested/ltr/{}.fa'.format(seqid)], 
                                 stdout=subprocess.PIPE, 
                                 stderr=subprocess.PIPE) 
 

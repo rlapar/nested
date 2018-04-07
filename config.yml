@@ -1,0 +1,35 @@
+ltr:
+  path: '/home/radovan/lexa/LTR_finder/ltr_finder'
+  prosite_path: &prosite_path /home/radovan/lexa/prosite
+  tRNAdb_path: &tRNAdb_path /home/radovan/lexa/LTR_finder/tRNAdb/Athal-tRNAs.fa
+  args:
+    l: 32
+    S: 3
+    o: 2
+    p: 15
+    g: 80
+    G: 5
+    T: 2
+    w: 2 #don't change, parsing format required!
+    a: *prosite_path
+    s: *tRNAdb_path
+    
+gt:
+  path: 'gt'
+  command: 'sketch'
+  style_path: &style_path /etc/nested/gt.style
+  args: 
+    width: 1400
+    style: *style_path
+
+blastx:
+  db_path: &db_path /home/radovan/lexa/blastDB/data/gydb_proteins.fa
+  args:
+    db: *db_path
+    outfmt: 5 #don't change, parsing format required!
+    num_threads: 3
+    dbsize: 90000
+    word_size: 2
+    evalue: 1
+
+logdir: /tmp/nested/logs

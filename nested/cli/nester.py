@@ -34,9 +34,9 @@ def main(input_fasta, sketch_only, data_folder):
             print('Processing {a}: DONE [{b}]'.format(a=sequence.id[:strlen], b=seq_end_time - seq_start_time)) 
         except KeyboardInterrupt:
             raise
-        except CalledProcessError:
-            number_of_errors += 1
-            print('Processing {}: SUBPROCESS ERROR'.format(sequence.id[:strlen]))
+        #except CalledProcessError:
+        #    number_of_errors += 1
+        #    print('Processing {}: SUBPROCESS ERROR'.format(sequence.id[:strlen]))
         #except:
         #    number_of_errors += 1
         #    print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id[:strlen]), sys.exc_info()[0]) 
