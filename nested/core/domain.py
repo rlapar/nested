@@ -5,7 +5,7 @@ from io import StringIO
 from Bio.Blast import NCBIXML
 from Bio.Blast.Applications import NcbiblastxCommandline
 
-from nested.config import config
+from nested.config.config import config
 
 class Domain(object):
 	"""Class representing domain parsed from blastx output.
@@ -46,7 +46,7 @@ def run_blastx(sequence):
         list[Domain]: list of matched domains
     """
     domains = []
-    blastx_cline = NcbiblastxCommandline(**config.blastx_args)
+    blastx_cline = NcbiblastxCommandline(**config['blastx']['args'])
     xml_out, stderr = blastx_cline(stdin=str(sequence))
     blast_records = NCBIXML.parse(StringIO(xml_out))
     try:

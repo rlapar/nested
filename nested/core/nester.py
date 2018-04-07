@@ -4,7 +4,7 @@ from nested.utils import intervals
 from nested.core.gene import Gene
 from nested.core.nested_element import NestedElement
 from nested.logging.logger import NesterLogger
-from nested.config import config
+from nested.config.config import config
 
 class Nester(object):
     """Class represent nesting in sequence, recursivelly find best evaluated transposon and crop it until no new transposons found
@@ -19,7 +19,7 @@ class Nester(object):
         self.sequence = sequence.seq
         self.nested_element = None
         self._iteration = 0
-        self._logger = NesterLogger('{}/{}'.format(config.logdir, self.seqid))
+        self._logger = NesterLogger('{}/{}'.format(config['logdir'], self.seqid))
         self._find_nesting()                    
 
     def _find_nesting(self):

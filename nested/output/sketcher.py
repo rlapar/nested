@@ -9,7 +9,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
-from nested.config import config
+from nested.config.config import config, args_dict_to_list
 from nested.utils import intervals
 
 DEFAULT_DIRPATH = 'data'
@@ -30,7 +30,7 @@ class Sketcher(object):
 
         self._create_dirs(nested_element.id, dirpath)
 
-        #find closes parent
+        #find closest parent
         nl = nested_element.nested_list
         parents = [-1] * len(nl)
         for i in range(len(parents) - 1):
@@ -116,8 +116,8 @@ class Sketcher(object):
         #self._create_dirs(id, dirpath)
         null = open(os.devnull, 'w')
         process = subprocess.check_output(
-            [config.gt_sketch_path] + 
-            config.gt_sketch_args + 
+            [config['gt']['path'], config['gt']['command']] + 
+            args_dict_to_list(config['gt']['args']) + 
             ['{}/{}/{}.png'.format(dirpath, id, id)] + 
             ['{}/{}/{}.gff'.format(dirpath, id, id)], stderr=null)
         
