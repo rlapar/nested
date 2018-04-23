@@ -32,4 +32,9 @@ blastx:
     word_size: 2
     evalue: 1
 
+gff_format:
+  genome_browser:
+    te_base: a
+    domain: b
+
 logdir: /tmp/nested/logs

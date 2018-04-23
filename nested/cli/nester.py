@@ -13,9 +13,10 @@ from nested.output.sketcher import Sketcher
 @click.command()
 @click.argument('input_fasta', required=True, type=click.Path(exists=True))
 @click.option('--sketch_only', '-s', is_flag=True, help='If true, nesting is not computed. Genes are sketched only from existing gff files.')
+@click.option('--format', '-f', default='default', help='Format for GFF.')
 @click.option('--data_folder', '-d', type=str, help='Output data folder.')
 #TODO DATA_FOLDER
-def main(input_fasta, sketch_only, data_folder):
+def main(input_fasta, sketch_only, format, data_folder):
     number_of_errors = 0
     start_time = datetime.now()
     sequences = list(SeqIO.parse(open(input_fasta), 'fasta'))
@@ -28,8 +29,9 @@ def main(input_fasta, sketch_only, data_folder):
         try:
             if not sketch_only:
                 nester = Nester(sequence)
-                sketcher.create_gff(nester.nested_element)
-            sketcher.sketch(sequence.id)
+                sketcher.create_gff(nester.nested_element, format=format)
+            if format == 'default':
+                sketcher.sketch(sequence.id)
             seq_end_time = datetime.now()
             print('Processing {a}: DONE [{b}]'.format(a=sequence.id[:strlen], b=seq_end_time - seq_start_time)) 
         except KeyboardInterrupt:
