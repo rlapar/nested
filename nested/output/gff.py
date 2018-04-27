@@ -89,11 +89,12 @@ class GFFMaker(object):
             if 'domains' in nl[i].features:
                 j = 0
                 for domain in nl[i].features['domains']:
+                    domain_location = domain.location
                     sign = (lambda x: x and (1, -1)[x < 0])(domain.frame[0])
                     if sign < 0:
-                        domain.location = [domain.location[1], domain.location[0]]
-                    overlap = [x for x in children if intervals.contains(domain.location, x)]
-                    cropped_domain = intervals.crop(domain.location, overlap)
+                        domain_location = [domain_location[1], domain_location[0]]
+                    overlap = [x for x in children if intervals.contains(domain_location, x)]
+                    cropped_domain = intervals.crop(domain_location, overlap)
                     for part in cropped_domain:
                         domain_type = format_dict[format]['domain'] if format != 'default' else domain.type
                         features.append(SeqFeature(
