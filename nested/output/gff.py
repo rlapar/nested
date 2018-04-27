@@ -69,13 +69,13 @@ class GFFMaker(object):
             cropped = intervals.crop(nl[i].location, children)
             for subinterval in cropped:
                 subseq += nested_element.sequence[subinterval[0]: (subinterval[1] + 1)]
-                if format == 'default':
-                    features.append(SeqFeature(
-                        FeatureLocation(subinterval[0], subinterval[1]),
-                        type='te',
-                        strand=0,
-                        qualifiers={'ID': 'TE {}'.format(i), 'Parent': 'TE_BASE {}'.format(i)}
-                    ))
+                te_type = format_dict[format]['te'] if format != 'default' else 'te'
+                features.append(SeqFeature(
+                    FeatureLocation(subinterval[0], subinterval[1]),
+                    type='te',
+                    strand=0,
+                    qualifiers={'ID': 'TE {}'.format(i), 'Parent': 'TE_BASE {}'.format(i)}
+                ))
 
             # save transposon fasta
             with open('{}/{}/TE/{}.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
@@ -89,11 +89,12 @@ class GFFMaker(object):
             if 'domains' in nl[i].features:
                 j = 0
                 for domain in nl[i].features['domains']:
+                    domain_location = domain.location
                     sign = (lambda x: x and (1, -1)[x < 0])(domain.frame[0])
                     if sign < 0:
-                        domain.location = [domain.location[1], domain.location[0]]
-                    overlap = [x for x in children if intervals.contains(domain.location, x)]
-                    cropped_domain = intervals.crop(domain.location, overlap)
+                        domain_location = [domain_location[1], domain_location[0]]
+                    overlap = [x for x in children if intervals.contains(domain_location, x)]
+                    cropped_domain = intervals.crop(domain_location, overlap)
                     for part in cropped_domain:
                         domain_type = format_dict[format]['domain'] if format != 'default' else domain.type
                         features.append(SeqFeature(
@@ -108,7 +109,10 @@ class GFFMaker(object):
         rec.features = features
 
         #create GFF
-        gff_filepath = '{}/{}/{}.gff'.format(dirpath, nested_element.id, nested_element.id)
+        filename = '{}/{}/{}'.format(dirpath, nested_element.id, nested_element.id)
+        if format != 'default':
+            filename += '_{}'.format(format)
+        gff_filepath = '{}.gff'.format(filename)
         with open(gff_filepath, 'w+') as gff_out:
             GFF.write([rec], gff_out)
 

@@ -30,18 +30,19 @@ def main(input_fasta, sketch_only, format, data_folder):
             if not sketch_only:
                 nester = Nester(sequence)
                 sketcher.create_gff(nester.nested_element, format=format)
-            if format == 'default':
-                sketcher.sketch(sequence.id)
+                sketcher.create_gff(nester.nested_element)
+            
+            sketcher.sketch(sequence.id)
             seq_end_time = datetime.now()
             print('Processing {a}: DONE [{b}]'.format(a=sequence.id[:strlen], b=seq_end_time - seq_start_time)) 
         except KeyboardInterrupt:
             raise
-        #except CalledProcessError:
-        #    number_of_errors += 1
-        #    print('Processing {}: SUBPROCESS ERROR'.format(sequence.id[:strlen]))
-        #except:
-        #    number_of_errors += 1
-        #    print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id[:strlen]), sys.exc_info()[0]) 
+        except CalledProcessError:
+            number_of_errors += 1
+            print('Processing {}: SUBPROCESS ERROR'.format(sequence.id[:strlen]))
+        except:
+            number_of_errors += 1
+            print('Processing {}: UNEXPECTED ERROR:'.format(sequence.id[:strlen]), sys.exc_info()[0]) 
 
 
     endTime = datetime.now()

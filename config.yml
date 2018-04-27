@@ -34,7 +34,8 @@ blastx:
 
 gff_format:
   genome_browser:
-    te_base: a
-    domain: b
-
+    te_base: nested_repeat
+    domain: polypeptide_domain
+    te: repeat_fragment
+    
 logdir: /tmp/nested/logs
