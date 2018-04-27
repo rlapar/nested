@@ -69,13 +69,13 @@ class GFFMaker(object):
             cropped = intervals.crop(nl[i].location, children)
             for subinterval in cropped:
                 subseq += nested_element.sequence[subinterval[0]: (subinterval[1] + 1)]
-                if format == 'default':
-                    features.append(SeqFeature(
-                        FeatureLocation(subinterval[0], subinterval[1]),
-                        type='te',
-                        strand=0,
-                        qualifiers={'ID': 'TE {}'.format(i), 'Parent': 'TE_BASE {}'.format(i)}
-                    ))
+                te_type = format_dict[format]['te'] if format != 'default' else 'te'
+                features.append(SeqFeature(
+                    FeatureLocation(subinterval[0], subinterval[1]),
+                    type='te',
+                    strand=0,
+                    qualifiers={'ID': 'TE {}'.format(i), 'Parent': 'TE_BASE {}'.format(i)}
+                ))
 
             # save transposon fasta
             with open('{}/{}/TE/{}.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
@@ -108,7 +108,10 @@ class GFFMaker(object):
         rec.features = features
 
         #create GFF
-        gff_filepath = '{}/{}/{}.gff'.format(dirpath, nested_element.id, nested_element.id)
+        filename = '{}/{}/{}'.format(dirpath, nested_element.id, nested_element.id)
+        if format != 'default':
+            filename += '_{}'.format(format)
+        gff_filepath = '{}.gff'.format(filename)
         with open(gff_filepath, 'w+') as gff_out:
             GFF.write([rec], gff_out)
 
