@@ -12,7 +12,8 @@ setup(
         'bcbio-gff==0.6.4',
         'biopython==1.70',
         'click==6.7',
-        'networkx==2.1'
+        'networkx==2.1',
+        'PyYAML==3.12'
     ],
     entry_points={
         'console_scripts': [
