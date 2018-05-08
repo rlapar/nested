@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import math
 
 from Bio import SeqIO
 from BCBio import GFF
@@ -57,10 +58,14 @@ class GFFMaker(object):
             #insert baseline
             base_type = format_dict[format]['te_base'] if format != 'default' else 'te_base'
             features.append(SeqFeature(
-                FeatureLocation(nl[i].location[0], nl[i].location[1]),
-                type=base_type,
-                strand=0,
-                qualifiers={'ID': 'TE_BASE {}'.format(i)}
+                FeatureLocation(
+                    nl[i].location[0], nl[i].location[1]),
+                    type=base_type,
+                    strand=0,
+                    qualifiers={
+                        'name': 'TE_BASE {}'.format(i),
+                        'ID': 'TE_BASE {}'.format(i)
+                    }
             ))
 
             #insert element cropped by its children
@@ -72,9 +77,13 @@ class GFFMaker(object):
                 te_type = format_dict[format]['te'] if format != 'default' else 'te'
                 features.append(SeqFeature(
                     FeatureLocation(subinterval[0], subinterval[1]),
-                    type='te',
+                    type=te_type,
                     strand=0,
-                    qualifiers={'ID': 'TE {}'.format(i), 'Parent': 'TE_BASE {}'.format(i)}
+                    qualifiers={
+                        'ID': 'TE {}'.format(i), 
+                        'name': 'TE {}'.format(i), 
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
                 ))
 
             # save transposon fasta
@@ -101,9 +110,63 @@ class GFFMaker(object):
                             FeatureLocation(part[0], part[1]),
                             type=domain_type,
                             strand=sign,
-                            qualifiers={'ID': 'DOMAIN {}-{}'.format(i, j), 'Parent': 'TE_BASE {}'.format(i)}
+                            qualifiers={
+                                'ID': 'DOMAIN {}-{}'.format(i, j), 
+                                'name': domain.type,
+                                'Parent': 'TE_BASE {}'.format(i)
+                            }
                         ))
                     j += 1
+
+            #insert pbs,ppt
+            if 'pbs' in nl[i].features and not math.isnan(nl[i].features['pbs'][0]):
+                pbs_tybe = format_dict[format]['pbs'] if format != 'default' else 'pbs'
+                features.append(SeqFeature(
+                    FeatureLocation(nl[i].features['pbs'][0], nl[i].features['pbs'][1]),
+                    type=pbs_tybe,
+                    strand=0,
+                    qualifiers={
+                        'ID': 'PBS {}'.format(i),
+                        'name': 'pbs',
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
+                ))
+
+            if 'ppt' in nl[i].features and not math.isnan(nl[i].features['ppt'][0]):
+                ppt_type = format_dict[format]['ppt'] if format != 'default' else 'ppt'
+                features.append(SeqFeature(
+                    FeatureLocation(nl[i].features['ppt'][0], nl[i].features['ppt'][1]),
+                    type=ppt_type,
+                    strand=0,
+                    qualifiers={
+                        'ID': 'PPT {}'.format(i),
+                        'name': 'ppt',
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
+                ))
+
+            #insert ltrs            
+            ltr_type = format_dict[format]['ltr'] if format != 'default' else 'ltr'
+            features.append(SeqFeature(
+                FeatureLocation(nl[i].ltr_right_location[0], nl[i].ltr_right_location[1]),
+                type=ltr_type,
+                strand=0,
+                qualifiers={
+                    'ID': 'LTR RIGHT {}'.format(i),
+                    'name': 'ltr right',
+                    'Parent': 'TE_BASE {}'.format(i)
+                }
+            ))
+            features.append(SeqFeature(
+                FeatureLocation(nl[i].ltr_left_location[0], nl[i].ltr_left_location[1]),
+                type=ltr_type,
+                strand=0,
+                qualifiers={
+                    'ID': 'LTR LEFT {}'.format(i),
+                    'name': 'ltr left',
+                    'Parent': 'TE_BASE {}'.format(i)
+                }
+            ))
 
         # FOR END
         rec.features = features
