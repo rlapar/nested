@@ -147,6 +147,54 @@ style =
     -- number of nucleotides. Set to 0 to disable type track.
     max_show_width     = nil,
   },
+--------------------------------------
+  pbs = {
+    -- Color definitions
+    stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 0.0},
+    stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 0.0},
+    fill               = {red=0.0, green=0.0, blue=0.0, alpha = 0.1},
+    style              = "box",
+    -- Collapsing options
+    collapse_to_parent = true,
+    split_lines        = true,
+    -- Caption options
+    max_capt_show_width= nil,
+    -- Display this track only if the viewport is not wider than this
+    -- number of nucleotides. Set to 0 to disable type track.
+    max_show_width     = nil,
+  },
+--------------------------------------
+  ppt = {
+    -- Color definitions
+    stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 0.0},
+    stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 0.0},
+    fill               = {red=0.0, green=0.0, blue=0.0, alpha = 0.1},
+    style              = "box",
+    -- Collapsing options
+    collapse_to_parent = true,
+    split_lines        = true,
+    -- Caption options
+    max_capt_show_width= nil,
+    -- Display this track only if the viewport is not wider than this
+    -- number of nucleotides. Set to 0 to disable type track.
+    max_show_width     = nil,
+  },
+--------------------------------------
+  ltr = {
+    -- Color definitions
+    stroke             = {red=0.0, green=0.0, blue=0.0, alpha = 0.0},
+    stroke_marked      = {red=1.0, green=0.0, blue=0.0, alpha = 0.0},
+    fill               = {red=0.0, green=0.0, blue=0.0, alpha = 0.1},
+    style              = "box",
+    -- Collapsing options
+    collapse_to_parent = true,
+    split_lines        = true,
+    -- Caption options
+    max_capt_show_width= nil,
+    -- Display this track only if the viewport is not wider than this
+    -- number of nucleotides. Set to 0 to disable type track.
+    max_show_width     = nil,
+  },
 ---------------------------------------
   -- Defines various format options for drawing.
   format =
