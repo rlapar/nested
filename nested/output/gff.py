@@ -89,7 +89,7 @@ class GFFMaker(object):
             # save transposon fasta
             with open('{}/{}/TE/{}.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
                 SeqIO.write(
-                    SeqRecord(subseq, id=nested_element.id, description='TE-{}'.format(i)),
+                    SeqRecord(subseq, id='{}|TE-{}'.format(nested_element.id, i), description='Cropped nested retrotransposon'),
                     fasta_out,
                     'fasta'
                 )
