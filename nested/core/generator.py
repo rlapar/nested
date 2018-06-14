@@ -75,4 +75,3 @@ class Generator(object):
         sequences = [SeqRecord(x.sequence, id=x.id, description='') for x in self.elements]
         with open(filepath, 'w') as output_handle:
             SeqIO.write(sequences, output_handle, 'fasta')
-        

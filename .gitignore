@@ -2,4 +2,9 @@
 python/*.pyc
 data
 tmp
+.idea
+.vscode
+*.fa
+images
+results
 

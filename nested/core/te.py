@@ -9,6 +9,7 @@ from Bio.SeqRecord import SeqRecord
 
 from nested.config.config import config, args_dict_to_list
 
+
 class TE(object):
     """Class representing TE. Every location is in format [from, to].
 
@@ -21,7 +22,9 @@ class TE(object):
         features (dict): dictionary of features assigned to TE (i.e. list of domains on the optimal path in graph)
         score (float): evaluated score of TE
     """
-    def __init__(self, ppt=None, pbs=None, location=None, ltr_left_location=None, ltr_right_location=None, features={}, score=None):
+
+    def __init__(self, ppt=None, pbs=None, location=None, ltr_left_location=None, ltr_right_location=None, features={},
+                 score=None):
         self.ppt = ppt
         self.pbs = pbs
         self.location = location
@@ -32,13 +35,14 @@ class TE(object):
 
     def __str__(self):
         lines = ['{{location = {},'.format(self.location),
-				 ' left ltr = {},'.format(self.ltr_left_location),
-				 ' right ltr = {},'.format(self.ltr_right_location),
-				 ' ppt = {},'.format(self.ppt),
-				 ' pbs = {},'.format(self.pbs),
-				 #' features = {},'.format(self.features),
-				 ' score = {}}}'.format(self.score)]
+                 ' left ltr = {},'.format(self.ltr_left_location),
+                 ' right ltr = {},'.format(self.ltr_right_location),
+                 ' ppt = {},'.format(self.ppt),
+                 ' pbs = {},'.format(self.pbs),
+                 # ' features = {},'.format(self.features),
+                 ' score = {}}}'.format(self.score)]
         return '\n'.join(lines)
+
 
 def run_ltr_finder(seqid, sequence):
     """Run LTR finder on sequence and return list of transposons
@@ -54,36 +58,38 @@ def run_ltr_finder(seqid, sequence):
     transposons = []
 
     if not os.path.exists('/tmp/nested'):
-    	os.makedirs('/tmp/nested')
+        os.makedirs('/tmp/nested')
 
     if not os.path.exists('/tmp/nested/ltr'):
-        	os.makedirs('/tmp/nested/ltr')
+        os.makedirs('/tmp/nested/ltr')
 
-    with open('/tmp/nested/ltr/{}.fa'.format(seqid), 'w+') as tmp_file: #prepare tmp fasta file for ltr finder
+    with open('/tmp/nested/ltr/{}.fa'.format(seqid), 'w+') as tmp_file:  # prepare tmp fasta file for ltr finder
         SeqIO.write(SeqRecord(sequence, id=seqid),
                     tmp_file,
                     'fasta')
 
-    #call LTR finder and feed stdin to it
-    process = subprocess.Popen([config['ltr']['path']] + args_dict_to_list(config['ltr']['args']) + ['/tmp/nested/ltr/{}.fa'.format(seqid)], 
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE) 
+    # call LTR finder and feed stdin to it
+    process = subprocess.Popen(
+        [config['ltr']['path']] + args_dict_to_list(config['ltr']['args']) + ['/tmp/nested/ltr/{}.fa'.format(seqid)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
 
-    #os.remove('/tmp/nested/ltr/{}.fa'.format(seqid))   
+    # os.remove('/tmp/nested/ltr/{}.fa'.format(seqid))
 
     stdout, stderr = process.communicate()
     parsed_output = parse_raw_output(stdout)
     for entry in parsed_output:
         params = {
-			'ppt': entry['ppt'], 
-			'pbs': entry['pbs'], 
-			'location': entry['location'], 
-			'ltr_left_location': entry['ltr_left_location'], 
-			'ltr_right_location': entry['ltr_right_location']
-		}
+            'ppt': entry['ppt'],
+            'pbs': entry['pbs'],
+            'location': entry['location'],
+            'ltr_left_location': entry['ltr_left_location'],
+            'ltr_right_location': entry['ltr_right_location']
+        }
         transposons.append(TE(**params))
-    
+
     return transposons
+
 
 def parse_raw_output(raw_output):
     """Parse raw output from LTR finder
@@ -102,41 +108,41 @@ def parse_raw_output(raw_output):
         return parse_ltr_table(e.split('\n')[1:])
     return {}
 
+
 def parse_ltr_table(raw_table):
-	re_interval = re.compile('[0-9N]+[-][0-9N]+')
-	#re_int = re.compile('[0-9N]+')
-	#re_float = re.compile('(\d+\.\d*)|N')
-	t_head = raw_table[0].split('\t')
-	transposons = []
+    re_interval = re.compile('[0-9N]+[-][0-9N]+')
+    # re_int = re.compile('[0-9N]+')
+    # re_float = re.compile('(\d+\.\d*)|N')
+    t_head = raw_table[0].split('\t')
+    transposons = []
 
-	for line in raw_table[1:]:
-		transposon = {}
-		#TO DO: test properly on real LTR tables
-		if len(line.split('\t')) == 1: #newline (end of table) 
-			return transposons
-		attributes = line.split('\t')
-		for i in range(len(attributes)):            
-			if re_interval.match(attributes[i]):
-				if attributes[i][0] == 'N':
-					transposon[str.lower(t_head[i])] = [float('nan'), float('nan')] 
-				else:
-					transposon[str.lower(t_head[i])] = [int(attributes[i].split('-')[0]), int(attributes[i].split('-')[1])]
-			else:
-				try:
-					transposon[str.lower(t_head[i])] = float(attributes[i])
-				except:
-					transposon[str.lower(t_head[i])] = attributes[i]
+    for line in raw_table[1:]:
+        transposon = {}
+        # TO DO: test properly on real LTR tables
+        if len(line.split('\t')) == 1:  # newline (end of table)
+            return transposons
+        attributes = line.split('\t')
+        for i in range(len(attributes)):
+            if re_interval.match(attributes[i]):
+                if attributes[i][0] == 'N':
+                    transposon[str.lower(t_head[i])] = [float('nan'), float('nan')]
+                else:
+                    transposon[str.lower(t_head[i])] = [int(attributes[i].split('-')[0]),
+                                                        int(attributes[i].split('-')[1])]
+            else:
+                try:
+                    transposon[str.lower(t_head[i])] = float(attributes[i])
+                except:
+                    transposon[str.lower(t_head[i])] = attributes[i]
 
-		transposon['ltr_left_location'] = [
-			transposon['location'][0],
-			transposon['location'][0] + int(transposon['ltr len'].split(',')[0])
-		]
-		transposon['ltr_right_location'] = [
-			transposon['location'][1] - int(transposon['ltr len'].split(',')[1]),
-			transposon['location'][1]
-		]
-		transposons.append(transposon)
+        transposon['ltr_left_location'] = [
+            transposon['location'][0],
+            transposon['location'][0] + int(transposon['ltr len'].split(',')[0])
+        ]
+        transposon['ltr_right_location'] = [
+            transposon['location'][1] - int(transposon['ltr len'].split(',')[1]),
+            transposon['location'][1]
+        ]
+        transposons.append(transposon)
 
-	return transposons
-
-
+    return transposons
