@@ -29,4 +29,3 @@ class Sketcher(object):
             args_dict_to_list(config['gt']['args']) + 
             ['{}/{}/{}.png'.format(dirpath, id, id)] + 
             ['{}/{}/{}.gff'.format(dirpath, id, id)], stderr=null)
-        
