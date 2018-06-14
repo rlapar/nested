@@ -74,6 +74,8 @@ class Nester(object):
         for i in reversed(range(len(nested_list) - 1)):
             for j in range(i + 1, len(nested_list)):
                 nested_list[j].location = intervals.expand(nested_list[i].location, nested_list[j].location)
+                nested_list[j].ltr_left_location = intervals.expand(nested_list[i].location, nested_list[j].ltr_left_location)
+                nested_list[j].ltr_right_location = intervals.expand(nested_list[i].location, nested_list[j].ltr_right_location)
                 for domain in nested_list[j].features['domains']:
                     domain.location = intervals.expand(nested_list[i].location, domain.location)
                 nested_list[j].features['ppt'] = intervals.expand(nested_list[i].location, nested_list[j].features['ppt'])
