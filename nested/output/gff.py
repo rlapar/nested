@@ -168,6 +168,30 @@ class GFFMaker(object):
                 }
             ))
 
+            #insert tsrs
+            if not math.isnan(nl[i].tsr_left[0]):
+                tsr_type = format_dict[format]['tsr'] if format != 'default' else 'tsr'
+                features.append(SeqFeature(
+                    FeatureLocation(nl[i].tsr_left[0], nl[i].tsr_left[1]),
+                    type=tsr_type,
+                    strand=0,
+                    qualifiers={
+                        'ID': 'TSR LEFT {}'.format(i),
+                        'name': 'tsr left',
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
+                ))
+                features.append(SeqFeature(
+                    FeatureLocation(nl[i].tsr_right[0], nl[i].tsr_right[1]),
+                    type=tsr_type,
+                    strand=0,
+                    qualifiers={
+                        'ID': 'TSR RIGHT {}'.format(i),
+                        'name': 'tsr right',
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
+                ))
+
         # FOR END
         rec.features = features
 

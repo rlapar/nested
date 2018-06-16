@@ -31,7 +31,7 @@ class Graph(object):
         self._graph.add_node(
             'ltr_left',
             location=te.ltr_left_location,
-            score=1,
+            score=1, #TODO introduce tsr into scoring
             node_class='ltr_left',
             strand='0',
             features={}
@@ -40,7 +40,7 @@ class Graph(object):
         self._graph.add_node(
             'ltr_right',
             location=te.ltr_right_location,
-            score=1,
+            score=1, #TODO introduce tsr into scoring
             node_class='ltr_right',
             strand='0',
             features={}

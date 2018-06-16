@@ -29,8 +29,8 @@ class Nester(object):
         nested_list = self._expand_transposon_list(nested_list)
         self.nested_element = NestedElement(self.seqid, self.sequence, nested_list)
 
-    def _get_unexpanded_transposon_list(self,
-                                        sequence):  # recursivelly find and crop best evaluated transposon, return unexpanded list of found transposons
+    def _get_unexpanded_transposon_list(self, sequence):
+        # recursivelly find and crop best evaluated transposon, return unexpanded list of found transposons
         self._iteration += 1
         gene = Gene(self.seqid, sequence)
         candidates = gene.get_candidates_above_threshold(threshold=0)
@@ -74,8 +74,8 @@ class Nester(object):
 
         return nested_list
 
-    def _expand_transposon_list(self,
-                                nested_list):  # backwards expanding of intervals according to previously found and cropped elements
+    def _expand_transposon_list(self, nested_list):
+        # backwards expanding of intervals according to previously found and cropped elements
         for i in reversed(range(len(nested_list) - 1)):
             for j in range(i + 1, len(nested_list)):
                 nested_list[j].location = intervals.expand(nested_list[i].location, nested_list[j].location)
@@ -89,4 +89,9 @@ class Nester(object):
                                                                   nested_list[j].features['ppt'])
                 nested_list[j].features['pbs'] = intervals.expand(nested_list[i].location,
                                                                   nested_list[j].features['pbs'])
+                #TODO check if works in corner case
+                nested_list[j].tsr_left = intervals.expand(nested_list[i].location,
+                                                           nested_list[j].tsr_left)
+                nested_list[j].tsr_right = intervals.expand(nested_list[i].location,
+                                                            nested_list[j].tsr_right)
         return nested_list
