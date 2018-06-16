@@ -26,6 +26,7 @@ class GFFMaker(object):
     def create_gff(self,
                    nested_element,
                    dirpath,
+                   output_fasta_offset,
                    format='default'):
 
         if format not in format_dict:
@@ -73,7 +74,7 @@ class GFFMaker(object):
             children = direct_children[i]
             cropped = intervals.crop(nl[i].location, children)
             for subinterval in cropped:
-                subseq += nested_element.sequence[subinterval[0]: (subinterval[1] + 1)]
+                subseq += nested_element.sequence[subinterval[0]: subinterval[1]]
                 te_type = format_dict[format]['te'] if format != 'default' else 'te'
                 features.append(SeqFeature(
                     FeatureLocation(subinterval[0], subinterval[1]),
@@ -87,12 +88,24 @@ class GFFMaker(object):
                 ))
 
             # save transposon fasta
+            subseq = (
+                nested_element.sequence[(nl[i].location[0] - output_fasta_offset) : nl[i].location[0]]
+                + subseq +
+                nested_element.sequence[(nl[i].location[1]) : (nl[i].location[1] + output_fasta_offset)])
             with open('{}/{}/TE/{}.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
                 SeqIO.write(
                     SeqRecord(subseq, id='{}|TE-{}'.format(nested_element.id, i), description='Cropped nested retrotransposon'),
                     fasta_out,
                     'fasta'
                 )
+            if len(cropped) > 1:
+                subseq = nested_element.sequence[(nl[i].location[0] - output_fasta_offset) : (nl[i].location[1] + output_fasta_offset)]
+                with open('{}/{}/TE/{}_full.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
+                    SeqIO.write(
+                        SeqRecord(subseq, id='{}|TE-{}'.format(nested_element.id, i), description='Cropped nested retrotransposon'),
+                        fasta_out,
+                        'fasta'
+                    )
 
             # insert domains
             if 'domains' in nl[i].features:
@@ -167,6 +180,30 @@ class GFFMaker(object):
                     'Parent': 'TE_BASE {}'.format(i)
                 }
             ))
+
+            #insert tsrs
+            if not math.isnan(nl[i].tsr_left[0]):
+                tsr_type = format_dict[format]['tsr'] if format != 'default' else 'tsr'
+                features.append(SeqFeature(
+                    FeatureLocation(nl[i].tsr_left[0], nl[i].tsr_left[1]),
+                    type=tsr_type,
+                    strand=0,
+                    qualifiers={
+                        'ID': 'TSR LEFT {}'.format(i),
+                        'name': 'tsr left',
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
+                ))
+                features.append(SeqFeature(
+                    FeatureLocation(nl[i].tsr_right[0], nl[i].tsr_right[1]),
+                    type=tsr_type,
+                    strand=0,
+                    qualifiers={
+                        'ID': 'TSR RIGHT {}'.format(i),
+                        'name': 'tsr right',
+                        'Parent': 'TE_BASE {}'.format(i)
+                    }
+                ))
 
         # FOR END
         rec.features = features

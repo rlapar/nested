@@ -13,12 +13,11 @@ class Sketcher(object):
         self._gff_maker = GFFMaker()
         self._gff_path = ''
 
-    def create_gff(self, nested_element, dirpath=None, format='default'):
+    def create_gff(self, nested_element, dirpath=None, output_fasta_offset=0, format='default'):
         if not dirpath:
             dirpath = DEFAULT_DIRPATH
-        self._gff_maker.create_gff(nested_element, dirpath, format)
+        self._gff_maker.create_gff(nested_element, dirpath, output_fasta_offset, format)
 
-    #def sketch(self, filepath=None):
     def sketch(self, id, dirpath=None):
         if not dirpath:
             dirpath = DEFAULT_DIRPATH

@@ -19,17 +19,22 @@ class TE(object):
         location (list): position of TE in gene
         ltr_left_location (list): location of left ltr
         ltr_right_location (list): location of right ltr
+        tsr_left (list): location of left tsr
+        tsr_right (list): location of right tsr
         features (dict): dictionary of features assigned to TE (i.e. list of domains on the optimal path in graph)
         score (float): evaluated score of TE
     """
 
-    def __init__(self, ppt=None, pbs=None, location=None, ltr_left_location=None, ltr_right_location=None, features={},
-                 score=None):
+    def __init__(self, ppt=None, pbs=None, location=None,
+                 ltr_left_location=None, ltr_right_location=None,
+                 tsr_left=None, tsr_right=None, features={}, score=None):
         self.ppt = ppt
         self.pbs = pbs
         self.location = location
         self.ltr_left_location = ltr_left_location
         self.ltr_right_location = ltr_right_location
+        self.tsr_left = tsr_left
+        self.tsr_right = tsr_right
         self.features = features
         self.score = score
 
@@ -37,6 +42,8 @@ class TE(object):
         lines = ['{{location = {},'.format(self.location),
                  ' left ltr = {},'.format(self.ltr_left_location),
                  ' right ltr = {},'.format(self.ltr_right_location),
+                 ' left tsr = {},'.format(self.tsr_left),
+                 ' right tsr = {},'.format(self.tsr_right),
                  ' ppt = {},'.format(self.ppt),
                  ' pbs = {},'.format(self.pbs),
                  # ' features = {},'.format(self.features),
@@ -84,7 +91,9 @@ def run_ltr_finder(seqid, sequence):
             'pbs': entry['pbs'],
             'location': entry['location'],
             'ltr_left_location': entry['ltr_left_location'],
-            'ltr_right_location': entry['ltr_right_location']
+            'ltr_right_location': entry['ltr_right_location'],
+            'tsr_right': entry['tsr_right'],
+            'tsr_left': entry['tsr_left'],
         }
         transposons.append(TE(**params))
 
@@ -118,7 +127,6 @@ def parse_ltr_table(raw_table):
 
     for line in raw_table[1:]:
         transposon = {}
-        # TO DO: test properly on real LTR tables
         if len(line.split('\t')) == 1:  # newline (end of table)
             return transposons
         attributes = line.split('\t')
@@ -143,6 +151,14 @@ def parse_ltr_table(raw_table):
             transposon['location'][1] - int(transposon['ltr len'].split(',')[1]),
             transposon['location'][1]
         ]
+        if transposon['tsr'] != 'N':
+            transposon['tsr_left'] = [transposon['ltr_left_location'][0] - len(transposon['tsr']),
+                                      transposon['ltr_left_location'][0] - 1]
+            transposon['tsr_right'] = [transposon['ltr_right_location'][1] + 1,
+                                      transposon['ltr_right_location'][1] + len(transposon['tsr'])]
+        else:
+            transposon['tsr_left'] = [float('nan'), float('nan')]
+            transposon['tsr_right'] = [float('nan'), float('nan')]
         transposons.append(transposon)
 
     return transposons

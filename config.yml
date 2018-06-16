@@ -40,5 +40,6 @@ gff_format:
     pbs: protein_binding_site
     ppt: RR_tract
     ltr: long_terminal_repeat
+    tsr: target_site_duplication
     
 logdir: /tmp/nested/logs
