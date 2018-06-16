@@ -26,6 +26,7 @@ class GFFMaker(object):
     def create_gff(self,
                    nested_element,
                    dirpath,
+                   output_fasta_offset,
                    format='default'):
 
         if format not in format_dict:
@@ -87,6 +88,10 @@ class GFFMaker(object):
                 ))
 
             # save transposon fasta
+            subseq = (
+                nested_element.sequence[(nl[i].location[0] - output_fasta_offset) : nl[i].location[0]]
+                + subseq +
+                nested_element.sequence[(nl[i].location[1] + 1) : (nl[i].location[1] + 1 + output_fasta_offset)])
             with open('{}/{}/TE/{}.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
                 SeqIO.write(
                     SeqRecord(subseq, id='{}|TE-{}'.format(nested_element.id, i), description='Cropped nested retrotransposon'),
