@@ -60,7 +60,7 @@ class GFFMaker(object):
             base_type = format_dict[format]['te_base'] if format != 'default' else 'te_base'
             features.append(SeqFeature(
                 FeatureLocation(
-                    nl[i].location[0], nl[i].location[1]),
+                    (nl[i].location[0]-1), nl[i].location[1]),
                     type=base_type,
                     strand=0,
                     qualifiers={
@@ -74,10 +74,10 @@ class GFFMaker(object):
             children = direct_children[i]
             cropped = intervals.crop(nl[i].location, children)
             for subinterval in cropped:
-                subseq += nested_element.sequence[subinterval[0]: subinterval[1]]
+                subseq += nested_element.sequence[subinterval[0] : subinterval[1]]
                 te_type = format_dict[format]['te'] if format != 'default' else 'te'
                 features.append(SeqFeature(
-                    FeatureLocation(subinterval[0], subinterval[1]),
+                    FeatureLocation((subinterval[0]-1), subinterval[1]),
                     type=te_type,
                     strand=0,
                     qualifiers={
@@ -91,7 +91,7 @@ class GFFMaker(object):
             subseq = (
                 nested_element.sequence[(nl[i].location[0] - output_fasta_offset) : nl[i].location[0]]
                 + subseq +
-                nested_element.sequence[(nl[i].location[1]) : (nl[i].location[1] + output_fasta_offset)])
+                nested_element.sequence[nl[i].location[1] : (nl[i].location[1] + output_fasta_offset)])
             with open('{}/{}/TE/{}.fa'.format(dirpath, nested_element.id, i), 'w') as fasta_out:
                 SeqIO.write(
                     SeqRecord(subseq, id='{}|TE-{}'.format(nested_element.id, i), description='Cropped nested retrotransposon'),
@@ -120,7 +120,7 @@ class GFFMaker(object):
                     for part in cropped_domain:
                         domain_type = format_dict[format]['domain'] if format != 'default' else domain.type
                         features.append(SeqFeature(
-                            FeatureLocation(part[0], part[1]),
+                            FeatureLocation(part[0] - 1, part[1]),
                             type=domain_type,
                             strand=sign,
                             qualifiers={
@@ -135,7 +135,7 @@ class GFFMaker(object):
             if 'pbs' in nl[i].features and not math.isnan(nl[i].features['pbs'][0]):
                 pbs_tybe = format_dict[format]['pbs'] if format != 'default' else 'pbs'
                 features.append(SeqFeature(
-                    FeatureLocation(nl[i].features['pbs'][0], nl[i].features['pbs'][1]),
+                    FeatureLocation(nl[i].features['pbs'][0] - 1, nl[i].features['pbs'][1]),
                     type=pbs_tybe,
                     strand=0,
                     qualifiers={
@@ -148,7 +148,7 @@ class GFFMaker(object):
             if 'ppt' in nl[i].features and not math.isnan(nl[i].features['ppt'][0]):
                 ppt_type = format_dict[format]['ppt'] if format != 'default' else 'ppt'
                 features.append(SeqFeature(
-                    FeatureLocation(nl[i].features['ppt'][0], nl[i].features['ppt'][1]),
+                    FeatureLocation(nl[i].features['ppt'][0] - 1, nl[i].features['ppt'][1]),
                     type=ppt_type,
                     strand=0,
                     qualifiers={
@@ -161,7 +161,7 @@ class GFFMaker(object):
             #insert ltrs            
             ltr_type = format_dict[format]['ltr'] if format != 'default' else 'ltr'
             features.append(SeqFeature(
-                FeatureLocation(nl[i].ltr_right_location[0], nl[i].ltr_right_location[1]),
+                FeatureLocation(nl[i].ltr_right_location[0] - 1, nl[i].ltr_right_location[1]),
                 type=ltr_type,
                 strand=0,
                 qualifiers={
@@ -171,7 +171,7 @@ class GFFMaker(object):
                 }
             ))
             features.append(SeqFeature(
-                FeatureLocation(nl[i].ltr_left_location[0], nl[i].ltr_left_location[1]),
+                FeatureLocation(nl[i].ltr_left_location[0] - 1, nl[i].ltr_left_location[1]),
                 type=ltr_type,
                 strand=0,
                 qualifiers={
@@ -185,7 +185,7 @@ class GFFMaker(object):
             if not math.isnan(nl[i].tsr_left[0]):
                 tsr_type = format_dict[format]['tsr'] if format != 'default' else 'tsr'
                 features.append(SeqFeature(
-                    FeatureLocation(nl[i].tsr_left[0], nl[i].tsr_left[1]),
+                    FeatureLocation(nl[i].tsr_left[0] - 1, nl[i].tsr_left[1]),
                     type=tsr_type,
                     strand=0,
                     qualifiers={
@@ -195,7 +195,7 @@ class GFFMaker(object):
                     }
                 ))
                 features.append(SeqFeature(
-                    FeatureLocation(nl[i].tsr_right[0], nl[i].tsr_right[1]),
+                    FeatureLocation(nl[i].tsr_right[0] - 1, nl[i].tsr_right[1]),
                     type=tsr_type,
                     strand=0,
                     qualifiers={
