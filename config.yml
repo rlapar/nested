@@ -1,7 +1,7 @@
 ltr:
-  path: '/home/radovan/lexa/LTR_finder/ltr_finder'
-  prosite_path: &prosite_path /home/radovan/lexa/prosite
-  tRNAdb_path: &tRNAdb_path /home/radovan/lexa/LTR_finder/tRNAdb/Athal-tRNAs.fa
+  path: '/usr/local/share/ltr_finder/ltr_finder'
+  prosite_path: &prosite_path /usr/local/share/pft2.2
+  tRNAdb_path: &tRNAdb_path /usr/local/share/ltr_finder/tRNAdb/Athal-tRNAs.fa
   args:
     l: 32
     S: 3
@@ -23,7 +23,7 @@ gt:
     style: *style_path
 
 blastx:
-  db_path: &db_path /home/radovan/lexa/blastDB/data/gydb_proteins.fa
+  db_path: &db_path /usr/local/share/blast/data/gydb_proteins.fa
   args:
     db: *db_path
     outfmt: 5 #don't change, parsing format required!
@@ -37,9 +37,8 @@ gff_format:
     te_base: nested_repeat
     domain: polypeptide_conserved_region
     te: repeat_fragment
-    pbs: protein_binding_site
+    pbs: primer_binding_site
     ppt: RR_tract
     ltr: long_terminal_repeat
-    tsr: target_site_duplication
-    
+   
 logdir: /tmp/nested/logs

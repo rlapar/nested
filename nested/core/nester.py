@@ -64,8 +64,8 @@ class Nester(object):
         cropped_sequence = sequence
 
         for element in nested_list:
-            cropped_sequence = cropped_sequence[:(element.location[0] - 1)] + cropped_sequence[
-                                                                              (element.location[1] + 1):]
+            cropped_sequence = cropped_sequence[:(element.location[0])] + cropped_sequence[
+                                                                              (element.location[1]):]
 
         # LOG
         self._logger.log_iteration(self._iteration, nested_list)
